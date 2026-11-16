@@ -1,0 +1,15 @@
+title = "Apple2Agent secret scanning"
+
+[extend]
+useDefault = true
+
+# Do not exempt tests: a real credential in a fixture is still a leak.
+[[rules]]
+id = "apple2agent-resource-reference"
+description = "Real signed Apple2Agent resource reference"
+regex = '''a2a1\.[A-Za-z0-9_-]{30,}\.[A-Za-z0-9_-]{20,}'''
+
+[[rules]]
+id = "private-tunnel-id"
+description = "Private tunnel identifier"
+regex = '''tunnel_[a-fA-F0-9]{24,}'''

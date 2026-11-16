@@ -1,0 +1,33 @@
+# Build output and dependencies
+node_modules/
+dist/
+bin/
+coverage/
+*.tsbuildinfo
+.DS_Store
+
+# Local work and private runtime data
+work/
+outputs/
+.private/
+.local/
+backups/
+connector/
+config.json
+connector.json
+runtime-key
+.env
+.env.*
+*.sqlite*
+*.db
+*.db-*
+*.log
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+*.zip
+*.tar
+*.tar.gz
+*.tgz

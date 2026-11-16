@@ -1,0 +1,46 @@
+{
+  "name": "apple2agent",
+  "version": "0.5.0-alpha.1",
+  "private": true,
+  "description": "Personal Apple services MCP hub with local capabilities and a private mobile connector",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "bin": {
+    "apple2agent": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc && sh scripts/build-native.sh",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "start": "node dist/cli.js serve",
+    "setup": "node dist/cli.js setup",
+    "doctor": "node dist/cli.js doctor",
+    "install:local": "node scripts/install-local.mjs",
+    "check:privacy": "python3 scripts/check-public-tree.py"
+  },
+  "dependencies": {
+    "@js-temporal/polyfill": "0.5.1",
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "debug": "4.4.3",
+    "html-to-text": "10.0.1",
+    "ical.js": "2.2.1",
+    "imapflow": "2.11.0",
+    "mailparser": "3.14.3",
+    "nodemailer": "10.5.0",
+    "tsdav": "2.5.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/debug": "4.1.13",
+    "@types/html-to-text": "9.0.4",
+    "@types/mailparser": "3.9.0",
+    "@types/node": "24.19.2",
+    "@types/nodemailer": "8.0.2",
+    "prettier": "3.10.1",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "license": "MIT"
+}

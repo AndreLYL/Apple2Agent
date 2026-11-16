@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "apple2agent": {
+      "command": "/absolute/path/to/apple2agent",
+      "args": [
+        "serve",
+        "--profile",
+        "readonly"
+      ]
+    }
+  }
+}

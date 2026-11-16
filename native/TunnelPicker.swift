@@ -1,0 +1,12 @@
+import AppKit
+import Foundation
+let data=FileHandle.standardInput.readDataToEndOfFile()
+guard let input=(try? JSONSerialization.jsonObject(with:data)) as? [String:String],let directory=input["directory"],let client=input["client"] else{exit(2)}
+let app=NSApplication.shared;app.setActivationPolicy(.regular);let alert=NSAlert();alert.messageText="连接 Apple2Agent 手机入口";alert.informativeText="填入为 Apple2Agent 单独创建的 Tunnel ID 和 Runtime API Key。不要复用微信桥接的配置。密钥只保存到本机私有文件。";alert.addButton(withTitle:"保存配置");alert.addButton(withTitle:"取消")
+let view=NSView(frame:NSRect(x:0,y:0,width:540,height:160));let tunnel=NSTextField(frame:NSRect(x:0,y:105,width:540,height:26));tunnel.placeholderString="tunnel_...";tunnel.stringValue=input["tunnel_id"] ?? "";let key=NSSecureTextField(frame:NSRect(x:0,y:57,width:540,height:26));key.placeholderString="Runtime API Key";let profile=NSPopUpButton(frame:NSRect(x:0,y:8,width:540,height:26));profile.addItems(withTitles:["只开放日历","开放所有已配置模块"]);profile.selectItem(at:input["profile"] == "calendar" ? 0:1);view.addSubview(tunnel);view.addSubview(key);view.addSubview(profile);alert.accessoryView=view;alert.window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]; app.activate(ignoringOtherApps:true); alert.window.makeKeyAndOrderFront(nil)
+if alert.runModal() != .alertFirstButtonReturn{exit(20)}
+let id=tunnel.stringValue.trimmingCharacters(in:.whitespacesAndNewlines),secret=key.stringValue.trimmingCharacters(in:.whitespacesAndNewlines)
+guard id.range(of:"^tunnel_[A-Za-z0-9_-]{8,128}$",options:.regularExpression) != nil,secret.count>=20,!secret.contains("\n") else{exit(2)}
+let fm=FileManager.default;let root=URL(fileURLWithPath:directory).appendingPathComponent("connector",isDirectory:true)
+do{try fm.createDirectory(at:root,withIntermediateDirectories:true,attributes:[.posixPermissions:0o700]);let keyURL=root.appendingPathComponent("runtime-key");try Data(secret.utf8).write(to:keyURL,options:.atomic);try fm.setAttributes([.posixPermissions:0o600],ofItemAtPath:keyURL.path);let config:[String:String] = ["client":client,"tunnel_id":id,"key_file":keyURL.path,"alias":"apple2agent","profile":profile.indexOfSelectedItem==0 ? "calendar":"all"];let out=try JSONSerialization.data(withJSONObject:config,options:[.prettyPrinted,.sortedKeys]);let url=root.appendingPathComponent("connector.json");try out.write(to:url,options:.atomic);try fm.setAttributes([.posixPermissions:0o600],ofItemAtPath:url.path)}catch{exit(2)}
+FileHandle.standardOutput.write(Data("{\"configured\":true}".utf8))
