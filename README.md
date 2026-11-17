@@ -15,7 +15,7 @@ A local MCP server for macOS. Your agent only sees the resources you pick, and n
 
 [中文](README.zh-CN.md) · [Quick start](#quick-start) · [How approval works](#how-sending-is-approved) · [Compatibility](docs/compatibility.md) · [Privacy](docs/permissions-and-privacy.md)
 
-<img src="docs/assets/hero.png" alt="Illustration: an agent reads today's calendar and the latest emails through Apple2Agent, queues a reply, and the reply waits for approval in a native Mac window" width="100%">
+<img src="docs/assets/hero.png" alt="Illustration: an agent uses Apple2Agent to check today's calendar, summarize email and save a draft, create reminders, list upcoming birthdays, and find trip notes and files" width="100%">
 
 </div>
 

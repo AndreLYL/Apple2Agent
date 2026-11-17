@@ -27,8 +27,8 @@ blocked_suffixes = {".sqlite", ".sqlite3", ".db", ".pem", ".p12", ".pfx", ".key"
 blocked_names = {"config.json", "connector.json", "runtime-key", ".env", ".DS_Store"}
 # Manually reviewed synthetic images; any content change requires a new review and hash.
 reviewed_binaries = {
-    "docs/assets/hero.png": "41d830793c0ed6f20b15f50daf9e67aa314c0445fca70c599abe9fa9be540289",
-    "docs/assets/hero.zh-CN.png": "960ac3f40abaf30ef36d518fd4ffdd3a2b45604ed7b1aecc9afab6988eab32b8",
+    "docs/assets/hero.png": "a483d8361bb1948dc60a649614a669b4a2499cc0c8caf191309aff033b934b1c",
+    "docs/assets/hero.zh-CN.png": "7e68c24676a0bb390bba05ba94f30aecc9ee475a52e1c06978b23e6468230a59",
 }
 findings = []
 count = 0

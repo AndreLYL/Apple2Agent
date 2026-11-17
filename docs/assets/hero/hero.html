@@ -21,7 +21,7 @@
         color: #1d1d1f;
         background:
           radial-gradient(
-            900px 500px at 15% 0%,
+            900px 500px at 10% 0%,
             rgba(120, 190, 255, 0.28),
             transparent 60%
           ),
@@ -33,55 +33,51 @@
           linear-gradient(180deg, #f7f8fb 0%, #eef1f6 100%);
         -webkit-font-smoothing: antialiased;
       }
-      .stage {
-        display: grid;
-        grid-template-columns: 300px 300px 420px;
-        gap: 56px;
+
+      .modules {
+        display: flex;
         justify-content: center;
-        padding-top: 34px;
+        gap: 34px;
+        padding-top: 26px;
       }
-      .col {
+      .module {
         display: flex;
         flex-direction: column;
         align-items: center;
-      }
-      .step {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 17px;
+        gap: 7px;
+        font-size: 12.5px;
         font-weight: 600;
-        letter-spacing: -0.01em;
-        margin-bottom: 18px;
-        height: 28px;
+        color: #3a3a3c;
       }
-      .step b {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: #1d1d1f;
-        color: #fff;
-        font-size: 14px;
+      .module .ic {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
         display: grid;
         place-items: center;
+        box-shadow: 0 6px 14px -6px rgba(20, 30, 60, 0.35);
       }
 
-      /* Phone */
+      .phones {
+        display: flex;
+        justify-content: center;
+        gap: 38px;
+        margin-top: 22px;
+      }
       .phone {
-        width: 290px;
-        height: 600px;
-        border-radius: 46px;
+        width: 252px;
+        height: 578px;
+        border-radius: 42px;
         background: #111;
-        padding: 9px;
+        padding: 8px;
         box-shadow:
-          0 30px 60px -20px rgba(20, 30, 60, 0.35),
+          0 30px 60px -22px rgba(20, 30, 60, 0.38),
           0 0 0 1px rgba(0, 0, 0, 0.6);
-        position: relative;
       }
       .screen {
         width: 100%;
         height: 100%;
-        border-radius: 38px;
+        border-radius: 35px;
         background: #fff;
         overflow: hidden;
         position: relative;
@@ -90,707 +86,614 @@
       }
       .island {
         position: absolute;
-        top: 10px;
+        top: 9px;
         left: 50%;
         transform: translateX(-50%);
-        width: 88px;
-        height: 26px;
-        border-radius: 14px;
+        width: 78px;
+        height: 23px;
+        border-radius: 12px;
         background: #000;
       }
       .status {
-        height: 44px;
+        height: 40px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 26px 0 30px;
-        font-size: 14px;
+        padding: 0 22px 0 26px;
+        font-size: 13px;
         font-weight: 600;
       }
       .status i {
         font-style: normal;
-        font-size: 11px;
+        font-size: 10px;
         letter-spacing: 1px;
       }
       .chat {
         flex: 1;
-        padding: 6px 16px 0;
-        font-size: 13px;
-        line-height: 1.5;
+        padding: 4px 13px 0;
+        font-size: 12px;
+        line-height: 1.45;
         overflow: hidden;
       }
       .user {
         margin-left: auto;
         width: fit-content;
-        max-width: 82%;
+        max-width: 86%;
         background: #dcf5ea;
         color: #17805b;
-        padding: 9px 13px;
-        border-radius: 18px;
-        margin-bottom: 10px;
-      }
-      .thought {
-        color: #8a8a8e;
-        font-size: 12px;
-        margin-bottom: 6px;
+        padding: 8px 12px;
+        border-radius: 17px;
+        margin: 4px 0 9px auto;
       }
       .tool {
         white-space: nowrap;
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        font-size: 10px;
+        gap: 5px;
+        font-size: 9.5px;
         color: #3a3a3c;
         background: #f2f2f5;
         border: 1px solid #e5e5ea;
         border-radius: 999px;
-        padding: 3px 9px 3px 7px;
-        margin-bottom: 8px;
+        padding: 3px 8px 3px 6px;
+        margin-bottom: 7px;
         font-family: "SF Mono", ui-monospace, monospace;
-      }
-      .tool b {
-        font-family: -apple-system, "PingFang SC", sans-serif;
-        font-weight: 600;
       }
       .tool::before {
         content: "";
-        width: 7px;
-        height: 7px;
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
         background: #34c759;
       }
       .muted {
         color: #6e6e73;
       }
-      .date {
-        font-size: 12px;
-        color: #6e6e73;
-        margin: 2px 0 8px;
+      .small {
+        font-size: 10.5px;
+        color: #8a8a8e;
       }
       .event {
         display: flex;
-        gap: 10px;
-        align-items: stretch;
+        gap: 9px;
         padding: 5px 0;
         border-bottom: 1px solid #f0f0f2;
       }
       .event:last-of-type {
         border-bottom: 0;
       }
-      .event .bar {
+      .bar {
         width: 3px;
         border-radius: 2px;
+        flex: none;
       }
-      .event .time {
-        width: 42px;
+      .time {
+        width: 38px;
         font-weight: 600;
         font-variant-numeric: tabular-nums;
       }
-      .event .cal {
+      .box {
+        margin-top: 7px;
+        border-radius: 11px;
+        padding: 7px 10px;
         font-size: 11px;
-        color: #8a8a8e;
       }
-      .free {
-        margin-top: 8px;
+      .box.green {
         background: #effaf3;
         color: #1e7a45;
+      }
+      .card {
+        border: 1px solid #ececf0;
         border-radius: 12px;
-        padding: 8px 11px;
-        font-size: 12px;
+        padding: 8px 10px;
+        margin-bottom: 9px;
       }
-      .chips {
-        display: flex;
-        gap: 6px;
-        margin-top: 10px;
-      }
-      .chip {
-        border: 1px solid #e0e0e5;
-        border-radius: 999px;
-        padding: 5px 10px;
-        font-size: 11.5px;
-      }
-      .chip.dark {
-        background: #1d1d1f;
-        color: #fff;
-        border-color: #1d1d1f;
-      }
-      .mail {
+      .item {
         display: flex;
         gap: 8px;
-        padding: 6px 0;
+        padding: 5px 0;
       }
-      .mail svg {
+      .item svg {
         flex: none;
-        margin-top: 3px;
+        margin-top: 2px;
       }
-      .mail .subj {
+      .item .t {
         font-weight: 600;
         line-height: 1.35;
       }
-      .mail .meta {
+      .check {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 1.5px solid #ff9f0a;
+        flex: none;
+        margin-top: 1px;
+      }
+      .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        flex: none;
+        display: grid;
+        place-items: center;
+        color: #fff;
         font-size: 11px;
-        color: #8a8a8e;
-      }
-      .queued {
-        border: 1px solid #ffd9a8;
-        background: #fff7ec;
-        border-radius: 14px;
-        padding: 9px 12px;
-        font-size: 12px;
-        color: #8a4b00;
-      }
-      .queued strong {
-        display: block;
-        font-size: 12.5px;
-        margin-bottom: 2px;
-      }
-      .queued code {
-        font-family: "SF Mono", ui-monospace, monospace;
-        font-size: 11px;
+        font-weight: 600;
       }
       .input {
-        margin: 0 12px 14px;
-        height: 40px;
-        border-radius: 20px;
+        margin: 0 11px 12px;
+        height: 36px;
+        border-radius: 18px;
         background: #f2f2f5;
         display: flex;
         align-items: center;
-        padding: 0 8px 0 14px;
-        gap: 10px;
+        padding: 0 6px 0 13px;
         color: #8a8a8e;
-        font-size: 13px;
+        font-size: 12px;
       }
       .input span {
         flex: 1;
       }
-      .input .send {
-        width: 28px;
-        height: 28px;
+      .send {
+        width: 26px;
+        height: 26px;
         border-radius: 50%;
         background: #1d1d1f;
         display: grid;
         place-items: center;
       }
-
-      /* Mac column */
-      .mac {
-        width: 420px;
-        position: relative;
-        height: 600px;
-      }
-      .term {
-        background: #1e1f24;
-        border-radius: 12px;
-        color: #e6e6e6;
-        font-family: "SF Mono", ui-monospace, monospace;
-        font-size: 12.5px;
-        box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.45);
-        overflow: hidden;
-      }
-      .bar3 {
-        display: flex;
-        gap: 7px;
-        padding: 10px 12px;
-        align-items: center;
-      }
-      .bar3 span {
-        width: 11px;
-        height: 11px;
-        border-radius: 50%;
-      }
-      .term .body {
-        padding: 2px 16px 46px;
-        line-height: 1.7;
-      }
-      .term .p {
-        color: #7ee2a8;
-      }
-      .term .dim {
-        color: #8b8e98;
-      }
-      .alert {
-        position: absolute;
-        top: 100px;
-        left: 22px;
-        right: -8px;
-        background: rgba(246, 246, 248, 0.98);
-        border-radius: 14px;
-        box-shadow:
-          0 30px 70px -20px rgba(20, 30, 60, 0.45),
-          0 0 0 1px rgba(0, 0, 0, 0.1);
-        padding: 22px 22px 18px;
-      }
-      .alert .icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 13px;
-        background: linear-gradient(145deg, #3a8dff, #36c98e);
-        display: grid;
-        place-items: center;
-        margin-bottom: 12px;
-        box-shadow: 0 4px 10px rgba(30, 100, 200, 0.25);
-      }
-      .alert h3 {
-        font-size: 15px;
-        font-weight: 700;
-        margin-bottom: 6px;
-      }
-      .alert p {
-        font-size: 12px;
-        color: #48484a;
-        line-height: 1.5;
-      }
-      .alert .op {
-        margin-top: 6px;
-        font-size: 12px;
-        color: #48484a;
-      }
-      .alert .op code {
-        font-family: "SF Mono", ui-monospace, monospace;
-        font-size: 11.5px;
-        background: #e9e9ee;
-        padding: 1px 6px;
-        border-radius: 5px;
-      }
-      .preview {
-        margin-top: 12px;
-        background: #fff;
-        border: 1px solid #dcdce1;
-        border-radius: 8px;
-        padding: 12px 14px;
-        font-size: 12.5px;
-        line-height: 1.55;
-      }
-      .preview .row {
-        display: flex;
-        gap: 8px;
-        padding: 2px 0;
-      }
-      .preview .k {
-        width: 64px;
-        color: #8a8a8e;
-        flex: none;
-      }
-      .preview hr {
-        border: 0;
-        border-top: 1px solid #ececf0;
-        margin: 8px 0;
-      }
-      .buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 16px;
-        position: relative;
-      }
-      .btn {
-        min-width: 96px;
-        height: 30px;
-        border-radius: 8px;
-        display: grid;
-        place-items: center;
-        font-size: 13px;
-        padding: 0 14px;
-        background: #fff;
-        box-shadow:
-          0 0.5px 1px rgba(0, 0, 0, 0.2),
-          0 0 0 0.5px rgba(0, 0, 0, 0.12);
-      }
-      .btn.default {
-        background: linear-gradient(#3b8cff, #1f6fe8);
-        color: #fff;
-      }
-      .cursor {
-        position: absolute;
-        right: 2px;
-        top: 19px;
-      }
       .note {
         position: absolute;
-        right: 26px;
-        bottom: 16px;
-        font-size: 12px;
+        right: 24px;
+        top: 14px;
+        font-size: 11.5px;
         color: #8a8a8e;
-      }
-      [data-lang] {
-        display: none;
-      }
-      html[lang="en"] [data-lang="en"],
-      html[lang="zh"] [data-lang="zh"] {
-        display: revert;
       }
     </style>
   </head>
   <body>
-    <div class="stage">
-      <!-- Calendar -->
-      <div class="col">
-        <div class="step">
-          <b>1</b><span data-lang="en">Ask about your day</span
-          ><span data-lang="zh">问问今天的安排</span>
+    <div class="modules">
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#ff6b5e, #ff3b30)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="16" rx="3" fill="#fff" />
+            <rect x="3" y="5" width="18" height="5" rx="2" fill="#ffd2cf" />
+            <path
+              d="M8 3v4M16 3v4"
+              stroke="#fff"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+            <text
+              x="12"
+              y="18.5"
+              font-size="8"
+              font-weight="700"
+              text-anchor="middle"
+              fill="#ff3b30"
+              font-family="-apple-system"
+            >
+              17
+            </text>
+          </svg>
         </div>
-        <div class="phone">
-          <div class="screen">
-            <div class="island"></div>
-            <div class="status"><span>9:41</span><i>●●● ▮</i></div>
-            <div class="chat">
-              <div class="user">
-                <span data-lang="en">What's on my calendar today?</span
-                ><span data-lang="zh">今天我的日历上有什么安排？</span>
-              </div>
-              <div class="thought">
-                <span data-lang="en">Thought for 8s ›</span
-                ><span data-lang="zh">思考了 8 秒 ›</span>
-              </div>
-              <div class="tool"><b>Apple2Agent</b>calendar_events</div>
+        <span data-t="calendar"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#4aa3ff, #0a6cff)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <rect x="3" y="5.5" width="18" height="13" rx="2.5" fill="#fff" />
+            <path
+              d="m4 7 8 6 8-6"
+              stroke="#0a6cff"
+              stroke-width="1.8"
+              fill="none"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+        <span data-t="mail"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#ffb84a, #ff9500)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <circle
+              cx="6"
+              cy="7"
+              r="2"
+              fill="none"
+              stroke="#fff"
+              stroke-width="1.6"
+            />
+            <circle cx="6" cy="12.5" r="2" fill="#fff" />
+            <circle
+              cx="6"
+              cy="18"
+              r="2"
+              fill="none"
+              stroke="#fff"
+              stroke-width="1.6"
+            />
+            <path
+              d="M10.5 7H20M10.5 12.5H20M10.5 18H20"
+              stroke="#fff"
+              stroke-width="1.8"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <span data-t="reminders"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#b9a184, #8e7458)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <circle cx="12" cy="9" r="4" fill="#fff" />
+            <path d="M4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6Z" fill="#fff" />
+          </svg>
+        </div>
+        <span data-t="contacts"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#ffe066, #ffc800)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <rect x="4" y="3" width="16" height="18" rx="2.5" fill="#fff" />
+            <path
+              d="M7.5 8.5h9M7.5 12h9M7.5 15.5h6"
+              stroke="#e0ae00"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </div>
+        <span data-t="notes"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#6fd3ff, #1ea7f0)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path
+              d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2.2h6.5A2.5 2.5 0 0 1 21 9.7v7.8a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 17.5Z"
+              fill="#fff"
+            />
+          </svg>
+        </div>
+        <span data-t="files"></span>
+      </div>
+      <div class="module">
+        <div class="ic" style="background: linear-gradient(#5ee07f, #28b84a)">
+          <svg width="24" height="24" viewBox="0 0 24 24">
+            <path
+              d="M12 4c4.7 0 8.5 3.1 8.5 7s-3.8 7-8.5 7c-.9 0-1.8-.1-2.6-.3L5 19.5l1.2-3.4C4.6 14.8 3.5 13 3.5 11c0-3.9 3.8-7 8.5-7Z"
+              fill="#fff"
+            />
+          </svg>
+        </div>
+        <span data-t="messages"></span>
+      </div>
+    </div>
+
+    <div class="phones">
+      <!-- Calendar -->
+      <div class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="status"><span>9:41</span><i>●●● ▮</i></div>
+          <div class="chat">
+            <div class="user" data-t="cal_q"></div>
+            <div class="tool">calendar_events</div>
+            <div data-t="cal_a"></div>
+            <div
+              class="small"
+              style="margin: 2px 0 5px"
+              data-t="cal_date"
+            ></div>
+            <div class="event">
+              <div class="bar" style="background: #0a84ff"></div>
+              <div class="time">09:30</div>
               <div>
-                <span data-lang="en">You have <b>4 events</b> today.</span
-                ><span data-lang="zh">今天共有 <b>4 项日程</b>。</span>
-              </div>
-              <div class="date">
-                <span data-lang="en">Tuesday, November 17</span
-                ><span data-lang="zh">11 月 17 日 · 星期二</span>
-              </div>
-              <div class="event">
-                <div class="bar" style="background: #0a84ff"></div>
-                <div class="time">09:30</div>
-                <div>
-                  <div>
-                    <span data-lang="en">Team standup</span
-                    ><span data-lang="zh">团队站会</span>
-                  </div>
-                  <div class="cal">
-                    <span data-lang="en">Work</span
-                    ><span data-lang="zh">工作</span>
-                  </div>
-                </div>
-              </div>
-              <div class="event">
-                <div class="bar" style="background: #ff9f0a"></div>
-                <div class="time">12:00</div>
-                <div>
-                  <div>
-                    <span data-lang="en">Lunch with Mia</span
-                    ><span data-lang="zh">和 Mia 吃午饭</span>
-                  </div>
-                  <div class="cal">
-                    <span data-lang="en">Personal</span
-                    ><span data-lang="zh">个人</span>
-                  </div>
-                </div>
-              </div>
-              <div class="event">
-                <div class="bar" style="background: #0a84ff"></div>
-                <div class="time">15:00</div>
-                <div>
-                  <div>
-                    <span data-lang="en">Design review</span
-                    ><span data-lang="zh">设计评审</span>
-                  </div>
-                  <div class="cal">
-                    <span data-lang="en">Work</span
-                    ><span data-lang="zh">工作</span>
-                  </div>
-                </div>
-              </div>
-              <div class="event">
-                <div class="bar" style="background: #ff9f0a"></div>
-                <div class="time">19:00</div>
-                <div>
-                  <div>
-                    <span data-lang="en">Gym</span
-                    ><span data-lang="zh">健身</span>
-                  </div>
-                  <div class="cal">
-                    <span data-lang="en">Personal</span
-                    ><span data-lang="zh">个人</span>
-                  </div>
-                </div>
-              </div>
-              <div class="free">
-                <span data-lang="en">Free: 10:00–12:00 · 13:00–15:00</span
-                ><span data-lang="zh">空闲：10:00–12:00 · 13:00–15:00</span>
-              </div>
-              <div class="chips">
-                <div class="chip dark">
-                  <span data-lang="en">Next 7 days</span
-                  ><span data-lang="zh">查看未来 7 天</span>
-                </div>
-                <div class="chip">
-                  <span data-lang="en">Find 30 min</span
-                  ><span data-lang="zh">找 30 分钟空档</span>
-                </div>
+                <div data-t="ev1"></div>
+                <div class="small" data-t="work"></div>
               </div>
             </div>
-            <div class="input">
-              <span
-                ><span data-lang="en">Ask anything</span
-                ><span data-lang="zh">有问题，尽管问</span></span
-              >
-              <div class="send">
-                <svg width="12" height="12" viewBox="0 0 12 12">
-                  <path
-                    d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
-                    stroke="#fff"
-                    stroke-width="1.6"
-                    fill="none"
-                    stroke-linecap="round"
-                  />
-                </svg>
+            <div class="event">
+              <div class="bar" style="background: #ff9f0a"></div>
+              <div class="time">12:00</div>
+              <div>
+                <div data-t="ev2"></div>
+                <div class="small" data-t="personal"></div>
               </div>
+            </div>
+            <div class="event">
+              <div class="bar" style="background: #0a84ff"></div>
+              <div class="time">15:00</div>
+              <div>
+                <div data-t="ev3"></div>
+                <div class="small" data-t="work"></div>
+              </div>
+            </div>
+            <div class="event">
+              <div class="bar" style="background: #ff9f0a"></div>
+              <div class="time">19:00</div>
+              <div>
+                <div data-t="ev4"></div>
+                <div class="small" data-t="personal"></div>
+              </div>
+            </div>
+            <div class="user" style="margin-top: 10px" data-t="free_q"></div>
+            <div class="tool">calendar_find_free_time</div>
+            <div class="box green" data-t="free_a"></div>
+          </div>
+          <div class="input">
+            <span data-t="ask"></span>
+            <div class="send">
+              <svg width="11" height="11" viewBox="0 0 12 12">
+                <path
+                  d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                  stroke="#fff"
+                  stroke-width="1.6"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Mail -->
-      <div class="col">
-        <div class="step">
-          <b>2</b><span data-lang="en">Work through your inbox</span
-          ><span data-lang="zh">处理你的收件箱</span>
-        </div>
-        <div class="phone">
-          <div class="screen">
-            <div class="island"></div>
-            <div class="status"><span>9:43</span><i>●●● ▮</i></div>
-            <div class="chat">
-              <div class="user">
-                <span data-lang="en">Summarize my 3 latest emails</span
-                ><span data-lang="zh">总结一下我最近 3 封邮件</span>
-              </div>
-              <div class="tool"><b>Apple2Agent</b>mail_search_messages</div>
-              <div class="mail">
-                <svg width="14" height="12" viewBox="0 0 14 12">
-                  <rect
-                    x="0.75"
-                    y="0.75"
-                    width="12.5"
-                    height="10.5"
-                    rx="2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                  <path
-                    d="m1.5 2 5.5 4.2L12.5 2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                </svg>
-                <div>
-                  <div class="subj">
-                    <span data-lang="en">Your flight to Osaka is confirmed</span
-                    ><span data-lang="zh">你的大阪航班已确认</span>
-                  </div>
-                  <div class="meta">
-                    <span data-lang="en">Sky Air · 08:12 · Unread</span
-                    ><span data-lang="zh">Sky Air · 08:12 · 未读</span>
-                  </div>
-                </div>
-              </div>
-              <div class="mail">
-                <svg width="14" height="12" viewBox="0 0 14 12">
-                  <rect
-                    x="0.75"
-                    y="0.75"
-                    width="12.5"
-                    height="10.5"
-                    rx="2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                  <path
-                    d="m1.5 2 5.5 4.2L12.5 2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                </svg>
-                <div>
-                  <div class="subj">
-                    <span data-lang="en"
-                      >Q4 planning doc: feedback by Friday</span
-                    ><span data-lang="zh">Q4 规划文档：周五前请反馈</span>
-                  </div>
-                  <div class="meta">
-                    <span data-lang="en">Alex Chen · Yesterday</span
-                    ><span data-lang="zh">Alex Chen · 昨天</span>
-                  </div>
-                </div>
-              </div>
-              <div class="mail">
-                <svg width="14" height="12" viewBox="0 0 14 12">
-                  <rect
-                    x="0.75"
-                    y="0.75"
-                    width="12.5"
-                    height="10.5"
-                    rx="2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                  <path
-                    d="m1.5 2 5.5 4.2L12.5 2"
-                    fill="none"
-                    stroke="#3a3a3c"
-                    stroke-width="1.3"
-                  />
-                </svg>
-                <div>
-                  <div class="subj">
-                    <span data-lang="en">Invoice #2041 from Studio Nine</span
-                    ><span data-lang="zh">Studio Nine 发票 #2041</span>
-                  </div>
-                  <div class="meta">
-                    <span data-lang="en">Studio Nine · Yesterday</span
-                    ><span data-lang="zh">Studio Nine · 昨天</span>
-                  </div>
-                </div>
-              </div>
-              <div class="muted" style="margin: 4px 0 10px">
-                <span data-lang="en">Alex is waiting on your feedback.</span
-                ><span data-lang="zh">Alex 在等你的反馈。</span>
-              </div>
-              <div class="user">
-                <span data-lang="en">Reply that I'll send notes Thursday</span
-                ><span data-lang="zh">回复 Alex：我周四发意见</span>
-              </div>
-              <div class="tool"><b>Apple2Agent</b>mail_reply_to_message</div>
-              <div class="queued">
-                <strong
-                  ><span data-lang="en">⏳ Reply queued for your approval</span
-                  ><span data-lang="zh">⏳ 回复已进入待审批</span></strong
-                >
-                <span data-lang="en">Not sent yet. Approve it on your Mac.</span
-                ><span data-lang="zh">尚未发送，请在 Mac 上批准。</span>
+      <div class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="status"><span>9:43</span><i>●●● ▮</i></div>
+          <div class="chat">
+            <div class="user" data-t="mail_q"></div>
+            <div class="tool">mail_search_messages</div>
+            <div class="item">
+              <svg width="13" height="11" viewBox="0 0 14 12">
+                <rect
+                  x=".75"
+                  y=".75"
+                  width="12.5"
+                  height="10.5"
+                  rx="2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+                <path
+                  d="m1.5 2 5.5 4.2L12.5 2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+              </svg>
+              <div>
+                <div class="t" data-t="m1"></div>
+                <div class="small" data-t="m1s"></div>
               </div>
             </div>
-            <div class="input">
-              <span
-                ><span data-lang="en">Ask anything</span
-                ><span data-lang="zh">有问题，尽管问</span></span
-              >
-              <div class="send">
-                <svg width="12" height="12" viewBox="0 0 12 12">
+            <div class="item">
+              <svg width="13" height="11" viewBox="0 0 14 12">
+                <rect
+                  x=".75"
+                  y=".75"
+                  width="12.5"
+                  height="10.5"
+                  rx="2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+                <path
+                  d="m1.5 2 5.5 4.2L12.5 2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+              </svg>
+              <div>
+                <div class="t" data-t="m2"></div>
+                <div class="small" data-t="m2s"></div>
+              </div>
+            </div>
+            <div class="item">
+              <svg width="13" height="11" viewBox="0 0 14 12">
+                <rect
+                  x=".75"
+                  y=".75"
+                  width="12.5"
+                  height="10.5"
+                  rx="2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+                <path
+                  d="m1.5 2 5.5 4.2L12.5 2"
+                  fill="none"
+                  stroke="#3a3a3c"
+                  stroke-width="1.3"
+                />
+              </svg>
+              <div>
+                <div class="t" data-t="m3"></div>
+                <div class="small" data-t="m3s"></div>
+              </div>
+            </div>
+            <div class="muted" style="margin: 3px 0 2px" data-t="mail_a"></div>
+            <div class="user" style="margin-top: 8px" data-t="draft_q"></div>
+            <div class="tool">mail_save_draft</div>
+            <div class="card">
+              <div class="small" data-t="draft_to"></div>
+              <div class="t" style="font-weight: 600" data-t="draft_subj"></div>
+              <div class="muted" data-t="draft_body"></div>
+            </div>
+          </div>
+          <div class="input">
+            <span data-t="ask"></span>
+            <div class="send">
+              <svg width="11" height="11" viewBox="0 0 12 12">
+                <path
+                  d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                  stroke="#fff"
+                  stroke-width="1.6"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders and contacts -->
+      <div class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="status"><span>9:45</span><i>●●● ▮</i></div>
+          <div class="chat">
+            <div class="user" data-t="rem_q"></div>
+            <div class="tool">reminders_create_reminder</div>
+            <div class="card">
+              <div class="item" style="padding: 2px 0">
+                <div class="check"></div>
+                <div>
+                  <div class="t" data-t="rem_title"></div>
+                  <div class="small" data-t="rem_meta"></div>
+                </div>
+              </div>
+            </div>
+            <div class="user" data-t="bd_q"></div>
+            <div class="tool">contacts_list_birthdays</div>
+            <div class="item">
+              <div class="avatar" style="background: #ff7a8a">M</div>
+              <div>
+                <div class="t">Mia Wang</div>
+                <div class="small" data-t="bd1"></div>
+              </div>
+            </div>
+            <div class="item">
+              <div class="avatar" style="background: #6c8cff">L</div>
+              <div>
+                <div class="t">Leo Zhang</div>
+                <div class="small" data-t="bd2"></div>
+              </div>
+            </div>
+            <div class="user" style="margin-top: 8px" data-t="bd_rem_q"></div>
+            <div class="box green" data-t="bd_rem_a"></div>
+          </div>
+          <div class="input">
+            <span data-t="ask"></span>
+            <div class="send">
+              <svg width="11" height="11" viewBox="0 0 12 12">
+                <path
+                  d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                  stroke="#fff"
+                  stroke-width="1.6"
+                  fill="none"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes and files -->
+      <div class="phone">
+        <div class="screen">
+          <div class="island"></div>
+          <div class="status"><span>9:47</span><i>●●● ▮</i></div>
+          <div class="chat">
+            <div class="user" data-t="trip_q"></div>
+            <div class="tool">notes_list_notes</div>
+            <div class="card">
+              <div class="item" style="padding: 2px 0">
+                <svg width="14" height="16" viewBox="0 0 14 16">
+                  <rect
+                    x=".5"
+                    y=".5"
+                    width="13"
+                    height="15"
+                    rx="2.5"
+                    fill="#ffd60a"
+                  />
                   <path
-                    d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                    d="M3.5 5h7M3.5 8h7M3.5 11h4.5"
                     stroke="#fff"
-                    stroke-width="1.6"
-                    fill="none"
+                    stroke-width="1.3"
                     stroke-linecap="round"
                   />
                 </svg>
+                <div>
+                  <div class="t" data-t="note_title"></div>
+                  <div class="small" data-t="note_meta"></div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Approval -->
-      <div class="col">
-        <div class="step">
-          <b>3</b><span data-lang="en">Approve every send on your Mac</span
-          ><span data-lang="zh">每次发送都在 Mac 上批准</span>
-        </div>
-        <div class="mac">
-          <div class="term">
-            <div class="bar3">
-              <span style="background: #ff5f57"></span
-              ><span style="background: #febc2e"></span
-              ><span style="background: #28c840"></span>
-            </div>
-            <div class="body">
-              <div><span class="p">~ $</span> apple2agent review 7f3c2a9e</div>
-              <div class="dim">
-                <span data-lang="en">Opening native approval window…</span
-                ><span data-lang="zh">正在打开原生审批窗口…</span>
+            <div class="tool">drive_search_files</div>
+            <div class="card">
+              <div class="item" style="padding: 2px 0">
+                <svg width="14" height="16" viewBox="0 0 14 16">
+                  <path
+                    d="M1 2.5A2 2 0 0 1 3 .5h5.5L13 5v8.5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2Z"
+                    fill="#ff5e57"
+                  />
+                  <text
+                    x="7"
+                    y="12"
+                    font-size="4.2"
+                    font-weight="700"
+                    text-anchor="middle"
+                    fill="#fff"
+                    font-family="-apple-system"
+                  >
+                    PDF
+                  </text>
+                </svg>
+                <div>
+                  <div class="t">Osaka-itinerary.pdf</div>
+                  <div class="small" data-t="file1_meta"></div>
+                </div>
+              </div>
+              <div class="item" style="padding: 4px 0 2px">
+                <svg width="14" height="16" viewBox="0 0 14 16">
+                  <path
+                    d="M1 2.5A2 2 0 0 1 3 .5h5.5L13 5v8.5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2Z"
+                    fill="#ff5e57"
+                  />
+                  <text
+                    x="7"
+                    y="12"
+                    font-size="4.2"
+                    font-weight="700"
+                    text-anchor="middle"
+                    fill="#fff"
+                    font-family="-apple-system"
+                  >
+                    PDF
+                  </text>
+                </svg>
+                <div>
+                  <div class="t">Hotel-booking.pdf</div>
+                  <div class="small" data-t="file2_meta"></div>
+                </div>
               </div>
             </div>
+            <div data-t="trip_a"></div>
+            <div class="user" style="margin-top: 9px" data-t="flight_q"></div>
+            <div class="tool">calendar_create</div>
+            <div class="box green" data-t="flight_a"></div>
           </div>
-
-          <div class="alert">
-            <div class="icon">
-              <svg width="26" height="26" viewBox="0 0 24 24">
+          <div class="input">
+            <span data-t="ask"></span>
+            <div class="send">
+              <svg width="11" height="11" viewBox="0 0 12 12">
                 <path
-                  d="M12 2.5 4.5 5.5v6c0 4.6 3.1 8.6 7.5 10 4.4-1.4 7.5-5.4 7.5-10v-6L12 2.5Z"
-                  fill="#fff"
-                  opacity=".95"
-                />
-                <path
-                  d="m8.5 12.2 2.4 2.4 4.6-4.8"
-                  stroke="#2f86f5"
-                  stroke-width="2"
+                  d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                  stroke="#fff"
+                  stroke-width="1.6"
                   fill="none"
                   stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h3>
-              <span data-lang="en">Review Apple2Agent action</span
-              ><span data-lang="zh">审核 Apple2Agent 操作</span>
-            </h3>
-            <p>
-              <span data-lang="en"
-                >Check the target and full content below. Only “Allow once”
-                authorizes this single action.</span
-              ><span data-lang="zh"
-                >请核对下方的目标与完整内容。只有点击允许，才会授权这一次操作。</span
-              >
-            </p>
-            <div class="op">
-              <span data-lang="en">Operation:</span
-              ><span data-lang="zh">操作：</span> <code>mail_send</code>
-            </div>
-            <div class="preview">
-              <div class="row">
-                <span class="k"
-                  ><span data-lang="en">From</span
-                  ><span data-lang="zh">发件人</span></span
-                ><span>me@example.com</span>
-              </div>
-              <div class="row">
-                <span class="k"
-                  ><span data-lang="en">To</span
-                  ><span data-lang="zh">收件人</span></span
-                ><span>alex.chen@example.com</span>
-              </div>
-              <div class="row">
-                <span class="k"
-                  ><span data-lang="en">Subject</span
-                  ><span data-lang="zh">主题</span></span
-                ><span
-                  ><span data-lang="en">Re: Q4 planning doc</span
-                  ><span data-lang="zh">Re: Q4 规划文档</span></span
-                >
-              </div>
-              <hr />
-              <div>
-                <span data-lang="en"
-                  >Hi Alex,<br />I'll send my notes on Thursday.<br />Thanks!</span
-                ><span data-lang="zh"
-                  >Alex 你好，<br />我会在周四把意见发给你。<br />谢谢！</span
-                >
-              </div>
-            </div>
-            <div class="buttons">
-              <div class="btn default">
-                <span data-lang="en">Deny</span><span data-lang="zh">拒绝</span>
-              </div>
-              <div class="btn">
-                <span data-lang="en">Allow once</span
-                ><span data-lang="zh">允许这一次</span>
-              </div>
-              <svg class="cursor" width="18" height="24" viewBox="0 0 18 24">
-                <path
-                  d="M1.5 1.5v17.2l4.3-4 2.9 6.6 2.9-1.3-2.8-6.4h6L1.5 1.5Z"
-                  fill="#000"
-                  stroke="#fff"
-                  stroke-width="1.4"
-                  stroke-linejoin="round"
                 />
               </svg>
             </div>
@@ -798,12 +701,115 @@
         </div>
       </div>
     </div>
-    <div class="note">
-      <span data-lang="en">Illustration · sample data</span
-      ><span data-lang="zh">示意图 · 示例数据</span>
-    </div>
+
+    <div class="note" data-t="note"></div>
+
     <script>
-      document.documentElement.lang = location.hash === "#zh" ? "zh" : "en";
+      const t = {
+        en: {
+          calendar: "Calendar",
+          mail: "Mail",
+          reminders: "Reminders",
+          contacts: "Contacts",
+          notes: "Notes",
+          files: "Files",
+          messages: "Messages",
+          ask: "Ask anything",
+          cal_q: "What's on my calendar today?",
+          cal_a: "You have <b>4 events</b> today.",
+          cal_date: "Tuesday, November 17",
+          ev1: "Team standup",
+          ev2: "Lunch with Mia",
+          ev3: "Design review",
+          ev4: "Gym",
+          work: "Work",
+          personal: "Personal",
+          free_q: "Find me 2 hours to focus",
+          free_a: "Free: 10:00–12:00 · 13:00–15:00",
+          mail_q: "Summarize my 3 latest emails",
+          m1: "Your flight to Osaka is confirmed",
+          m1s: "Sky Air · 08:12 · Unread",
+          m2: "Q4 planning doc: feedback by Friday",
+          m2s: "Alex Chen · Yesterday",
+          m3: "Invoice #2041 from Studio Nine",
+          m3s: "Studio Nine · Yesterday",
+          mail_a: "Alex is waiting on your feedback.",
+          draft_q: "Draft a reply to Alex",
+          draft_to: "Saved to Drafts · To Alex Chen",
+          draft_subj: "Re: Q4 planning doc",
+          draft_body: "I'll send my notes on Thursday…",
+          rem_q: "Remind me to submit expenses Friday at 10",
+          rem_title: "Submit expense report",
+          rem_meta: "Fri 10:00 · Work · 15 min alert",
+          bd_q: "Whose birthday is coming up?",
+          bd1: "Thu, Nov 19 · in 2 days",
+          bd2: "Sat, Nov 21 · turns 30",
+          bd_rem_q: "Remind me to call Mia that day",
+          bd_rem_a: "Added to Personal · Thu 09:00",
+          trip_q: "Find my Osaka trip notes and files",
+          note_title: "Osaka trip plan",
+          note_meta: "Notes · Travel",
+          file1_meta: "iCloud Drive / Travel",
+          file2_meta: "iCloud Drive / Travel",
+          trip_a: "Flight leaves <b>Nov 28, 09:15</b>. Hotel is near Namba.",
+          flight_q: "Add the flight to my calendar",
+          flight_a: "Added to Personal · Nov 28, 09:15",
+          note: "Illustration · sample data",
+        },
+        zh: {
+          calendar: "日历",
+          mail: "邮件",
+          reminders: "提醒事项",
+          contacts: "通讯录",
+          notes: "备忘录",
+          files: "文件",
+          messages: "信息",
+          ask: "有问题，尽管问",
+          cal_q: "今天我的日历上有什么安排？",
+          cal_a: "今天共有 <b>4 项日程</b>。",
+          cal_date: "11 月 17 日 · 星期二",
+          ev1: "团队站会",
+          ev2: "和 Mia 吃午饭",
+          ev3: "设计评审",
+          ev4: "健身",
+          work: "工作",
+          personal: "个人",
+          free_q: "帮我找 2 小时专注时间",
+          free_a: "空闲：10:00–12:00 · 13:00–15:00",
+          mail_q: "总结一下我最近 3 封邮件",
+          m1: "你的大阪航班已确认",
+          m1s: "Sky Air · 08:12 · 未读",
+          m2: "Q4 规划文档：周五前请反馈",
+          m2s: "Alex Chen · 昨天",
+          m3: "Studio Nine 发票 #2041",
+          m3s: "Studio Nine · 昨天",
+          mail_a: "Alex 在等你的反馈。",
+          draft_q: "帮我起草给 Alex 的回复",
+          draft_to: "已存入草稿箱 · 收件人 Alex Chen",
+          draft_subj: "Re: Q4 规划文档",
+          draft_body: "我会在周四把意见发给你……",
+          rem_q: "周五上午 10 点提醒我交报销单",
+          rem_title: "提交报销单",
+          rem_meta: "周五 10:00 · 工作 · 提前 15 分钟提醒",
+          bd_q: "最近谁过生日？",
+          bd1: "11 月 19 日 周四 · 还有 2 天",
+          bd2: "11 月 21 日 周六 · 30 岁",
+          bd_rem_q: "那天提醒我给 Mia 打电话",
+          bd_rem_a: "已添加到个人 · 周四 09:00",
+          trip_q: "找出大阪旅行的笔记和文件",
+          note_title: "大阪旅行计划",
+          note_meta: "备忘录 · 旅行",
+          file1_meta: "iCloud 云盘 / 旅行",
+          file2_meta: "iCloud 云盘 / 旅行",
+          trip_a:
+            "航班 <b>11 月 28 日 09:15</b> 起飞，酒店在难波附近，15:00 起可入住。",
+          flight_q: "把航班加到我的日历",
+          flight_a: "已添加到个人 · 11 月 28 日 09:15",
+          note: "示意图 · 示例数据",
+        },
+      }[location.hash === "#zh" ? "zh" : "en"];
+      for (const el of document.querySelectorAll("[data-t]"))
+        el.innerHTML = t[el.dataset.t];
     </script>
   </body>
 </html>

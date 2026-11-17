@@ -15,7 +15,7 @@
 
 [English](README.md) · [快速开始](#快速开始) · [发送审批流程](#邮件发送如何审批) · [兼容性](docs/compatibility.md) · [隐私说明](docs/permissions-and-privacy.md)
 
-<img src="docs/assets/hero.zh-CN.png" alt="示意图：Agent 通过 Apple2Agent 读取今天的日程和最近的邮件，准备回复后，在 Mac 原生窗口中等待批准" width="100%">
+<img src="docs/assets/hero.zh-CN.png" alt="示意图：Agent 通过 Apple2Agent 查看今日日程、总结邮件并保存草稿、创建提醒、查询近期生日、查找旅行笔记和文件" width="100%">
 
 </div>
 
