@@ -1,3 +1,4 @@
+import { toolDescription } from "../core/tool-descriptions.js";
 import { z } from "zod";
 import { authorize, type AccessContext } from "../core/context.js";
 import type { Config } from "../core/config.js";
@@ -40,7 +41,7 @@ export class RemindersModule implements Module {
     ) =>
       (this.tools[name] = {
         schema,
-        description: `${operation} in authorized native Reminders. IDs are exact references. Writes require a stable request_id and revision. Date-only stays a date; completion is a target state. Native revisions are best-effort, not atomic CAS.`,
+        description: toolDescription(name),
         capability: cap,
         destructive: cap === "reminders:delete",
         run: (ctx, a) => this.run(ctx, operation, a, cap),

@@ -1,3 +1,4 @@
+import { toolDescription } from "../core/tool-descriptions.js";
 import { z } from "zod";
 import { parseBirthday } from "../core/birthday.js";
 import { searchText } from "../core/search-text.js";
@@ -87,7 +88,7 @@ export class ContactsModule implements Module {
         schema,
         capability: cap,
         destructive: cap === "contacts:delete",
-        description: `${op} in authorized iCloud address books. Exact references and strong ETag revisions protect changes. Email/phone lists append unless replace_lists is explicitly set. Unknown vCard properties are preserved; fuzzy search never selects a recipient automatically.`,
+        description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, cap),
       });
     add(

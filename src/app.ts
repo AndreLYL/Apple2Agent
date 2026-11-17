@@ -1,3 +1,4 @@
+import { toolDescription } from "./core/tool-descriptions.js";
 import { VERSION } from "./core/version.js";
 import { join } from "node:path";
 import { lstatSync } from "node:fs";
@@ -140,14 +141,14 @@ export function createApplication(
   tools.apple_action_status = {
     schema: awaitlessSchema(),
     capability: "mail:read",
-    description: "Read the exact action status. This cannot approve an action.",
+    description: toolDescription("apple_action_status"),
     run: async (ctx, a) => approvals.status(ctx, a.action_id),
   };
   tools.apple_action_discard = {
     readOnly: false,
     schema: awaitlessSchema(),
     capability: "mail:read",
-    description: "Cancel an unreleased action. This never approves or sends.",
+    description: toolDescription("apple_action_discard"),
     run: async (ctx, a) => approvals.discard(ctx, a.action_id),
   };
   return {

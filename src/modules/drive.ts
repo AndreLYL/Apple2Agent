@@ -1,3 +1,4 @@
+import { toolDescription } from "../core/tool-descriptions.js";
 import { z } from "zod";
 import { resolve, extname, join } from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -55,7 +56,7 @@ export class DriveModule implements Module {
         schema,
         capability: cap,
         destructive: cap === "drive:delete",
-        description: `${op} within explicitly authorized Drive roots. Relative paths only. Cloud-only files are not empty files. Reads/searches are bounded and report completeness. Replacements require revision and backup.`,
+        description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, cap),
       });
     add("drive_list_roots", z.object({}).strict(), "roots", "drive:read");

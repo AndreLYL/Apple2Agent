@@ -1,3 +1,4 @@
+import { toolDescription } from "../core/tool-descriptions.js";
 import { z } from "zod";
 import { DatabaseSync } from "node:sqlite";
 import { homedir } from "node:os";
@@ -70,7 +71,7 @@ export class MessagesModule implements Module {
       (this.tools[name] = {
         schema,
         capability: send ? "messages:send" : "messages:read",
-        description: `${op} in this Mac user's explicitly selected Messages chats. SMS must already be synced; sending is iMessage only. Sends freeze exact participants and text for native review, never fall back to SMS or another chat. Missing/unsupported history is explicit.`,
+        description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, send),
       });
     add(
