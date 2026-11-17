@@ -1,3 +1,4 @@
+import { toolAnnotations } from "./tool-annotations.js";
 import { toolDescription } from "../core/tool-descriptions.js";
 import { VERSION } from "../core/version.js";
 import { toolResult } from "./result.js";
@@ -160,13 +161,11 @@ export function createServer(
       {
         description: app?.tools?.[name]?.description ?? toolDescription(name),
         inputSchema: registry[name as keyof typeof registry]!,
-        annotations: {
-          readOnlyHint: readOnly,
-          destructiveHint:
-            app?.tools?.[name]?.destructive ?? name === "calendar_delete",
-          idempotentHint: true,
-          openWorldHint: true,
-        },
+        annotations: toolAnnotations(
+          name,
+          readOnly,
+          app?.tools?.[name]?.destructive,
+        ),
       },
       async (args: unknown, extra: { signal: AbortSignal }) =>
         invoke(

@@ -32,7 +32,6 @@ export class NotesModule implements Module {
       (this.tools[name] = {
         schema,
         capability: cap,
-        destructive: cap === "notes:delete" || op === "rewrite",
         description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, cap),
       });

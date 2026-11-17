@@ -43,7 +43,6 @@ export class RemindersModule implements Module {
         schema,
         description: toolDescription(name),
         capability: cap,
-        destructive: cap === "reminders:delete",
         run: (ctx, a) => this.run(ctx, operation, a, cap),
       });
     add(

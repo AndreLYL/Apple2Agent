@@ -55,7 +55,6 @@ export class DriveModule implements Module {
       (this.tools[name] = {
         schema,
         capability: cap,
-        destructive: cap === "drive:delete",
         description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, cap),
       });

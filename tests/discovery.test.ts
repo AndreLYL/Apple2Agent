@@ -121,3 +121,75 @@ test("all tools publish concise operation-specific descriptions and bounded disc
     /unchanged prior change_token/,
   );
 });
+
+test("risk hints distinguish replacement, additive preparation and local action state", async () => {
+  const { toolAnnotations, writeEffects } =
+    await import("../src/mcp/tool-annotations.js");
+  const tools = await discover("all");
+  const annotations = (name: string) =>
+    tools.find((t) => t.name === name)!.annotations!;
+  const writes = tools.filter((t) => !t.annotations!.readOnlyHint);
+  assert.deepEqual(
+    writes.map((t) => t.name).sort(),
+    Object.keys(writeEffects).sort(),
+  );
+  for (const tool of tools.filter((t) => t.annotations!.readOnlyHint)) {
+    assert.equal(tool.annotations!.destructiveHint, false, tool.name);
+    assert.equal(tool.annotations!.idempotentHint, true, tool.name);
+  }
+  for (const name of [
+    "calendar_update",
+    "drive_write_file",
+    "drive_move_item",
+    "contacts_update_contact",
+    "contacts_update_group",
+    "reminders_complete_reminder",
+    "reminders_update_list",
+    "notes_move_note",
+    "notes_update_note",
+    "mail_update_draft",
+    "mail_execute_send",
+    "apple_action_discard",
+  ]) {
+    assert.equal(annotations(name).destructiveHint, true, name);
+    assert.equal(annotations(name).readOnlyHint, false, name);
+  }
+  for (const name of [
+    "calendar_create",
+    "mail_create_folder",
+    "notes_append_to_note",
+    "mail_send_message",
+    "mail_reply_to_message",
+    "mail_send_draft",
+    "mail_unsubscribe_from_list",
+    "imessage_execute_send",
+  ]) {
+    assert.equal(annotations(name).destructiveHint, false, name);
+    assert.equal(annotations(name).readOnlyHint, false, name);
+  }
+  for (const tool of writes) {
+    const guard = writeEffects[tool.name]!.replay;
+    assert.ok(
+      Object.hasOwn(tool.inputSchema.properties!, guard),
+      `${tool.name}: ${guard}`,
+    );
+    assert.equal(tool.annotations!.idempotentHint, true, tool.name);
+  }
+  for (const name of ["apple_action_status", "apple_action_discard"]) {
+    assert.equal(annotations(name).openWorldHint, false, name);
+  }
+  for (const name of [
+    "calendar_events",
+    "drive_read_file",
+    "mail_execute_send",
+    "imessage_execute_send",
+  ]) {
+    assert.equal(annotations(name).openWorldHint, true, name);
+  }
+  assert.deepEqual(toolAnnotations("unreviewed_write", false), {
+    readOnlyHint: false,
+    destructiveHint: true,
+    idempotentHint: false,
+    openWorldHint: true,
+  });
+});

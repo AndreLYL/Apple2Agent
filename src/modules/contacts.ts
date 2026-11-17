@@ -87,7 +87,6 @@ export class ContactsModule implements Module {
       (this.tools[name] = {
         schema,
         capability: cap,
-        destructive: cap === "contacts:delete",
         description: toolDescription(name),
         run: (ctx, a) => this.run(ctx, op, a, cap),
       });

@@ -160,3 +160,132 @@ test("approvals encrypt payloads, require trusted review and release once across
   state.close();
   f.operations.close();
 });
+
+test("send and unsubscribe action IDs prevent repeated effects after success, uncertainty and restart", async () => {
+  for (const operation of ["mail_send", "imessage_send", "mail_unsubscribe"]) {
+    for (const uncertain of [false, true]) {
+      const dir = await mkdtemp(join(tmpdir(), "a2a-action-replay-"));
+      const path = join(dir, "state.sqlite");
+      const f = fixture();
+      const key = randomBytes(32);
+      let state = new HubState(path);
+      let approvals = new ApprovalStore(state, f.cfg, async () => key);
+      const capability =
+        operation === "imessage_send" ? "messages:send" : "mail:send";
+      const requestId = randomUUID();
+      const payload = { text: "synthetic frozen payload" };
+      let effects = 0;
+      const release = async () => {
+        effects++;
+        if (uncertain) throw new Error("synthetic lost receipt");
+        return { status: "upstream_accepted", accepted_count: 1 };
+      };
+      try {
+        const action = await approvals.request(
+          f.ctx,
+          operation,
+          requestId,
+          capability,
+          payload,
+        );
+        assert.equal(
+          (
+            await approvals.request(
+              f.ctx,
+              operation,
+              requestId,
+              capability,
+              payload,
+            )
+          ).action_id,
+          action.action_id,
+        );
+        await assert.rejects(
+          approvals.request(f.ctx, operation, requestId, capability, {
+            text: "changed",
+          }),
+          { code: "REQUEST_CONFLICT" },
+        );
+        // A synthetic trusted reviewer substitutes for the UI; no native calls.
+        await approvals.review(f.ctx, action.action_id, async () => true);
+        if (uncertain) {
+          await assert.rejects(
+            approvals.execute(f.ctx, action.action_id, operation, release),
+            { code: "OUTCOME_UNKNOWN" },
+          );
+        } else {
+          assert.equal(
+            (
+              await approvals.execute(
+                f.ctx,
+                action.action_id,
+                operation,
+                release,
+              )
+            ).replayed,
+            false,
+          );
+        }
+        state.close();
+        state = new HubState(path);
+        approvals = new ApprovalStore(state, f.cfg, async () => key);
+        if (uncertain) {
+          await assert.rejects(
+            approvals.execute(f.ctx, action.action_id, operation, release),
+            { code: "OUTCOME_UNKNOWN" },
+          );
+        } else {
+          assert.equal(
+            (
+              await approvals.execute(
+                f.ctx,
+                action.action_id,
+                operation,
+                release,
+              )
+            ).replayed,
+            true,
+          );
+        }
+        assert.equal(effects, 1, `${operation}: uncertain=${uncertain}`);
+      } finally {
+        state.close();
+        f.operations.close();
+      }
+    }
+  }
+});
+
+test("discard erases the frozen payload and repeated discard cannot release an effect", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "a2a-discard-"));
+  const state = new HubState(join(directory, "state.sqlite"));
+  const f = fixture();
+  const key = randomBytes(32);
+  const approvals = new ApprovalStore(state, f.cfg, async () => key);
+  try {
+    const action = await approvals.request(
+      f.ctx,
+      "mail_send",
+      randomUUID(),
+      "mail:send",
+      { text: "synthetic payload" },
+    );
+    assert.equal(approvals.discard(f.ctx, action.action_id).status, "rejected");
+    const saved = state.get<{ ciphertext: string }>(
+      `approval:${action.action_id}`,
+    );
+    assert.equal(saved!.ciphertext, "");
+    assert.throws(() => approvals.discard(f.ctx, action.action_id), {
+      code: "OUTCOME_UNKNOWN",
+    });
+    await assert.rejects(
+      approvals.execute(f.ctx, action.action_id, "mail_send", async () =>
+        assert.fail("Discarded action released"),
+      ),
+      { code: "OUTCOME_UNKNOWN" },
+    );
+  } finally {
+    state.close();
+    f.operations.close();
+  }
+});
