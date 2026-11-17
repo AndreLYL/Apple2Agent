@@ -4,6 +4,7 @@
 This complements a secret scanner; it is not a proof of absence of secrets.
 Scans tracked files and non-ignored untracked files, not runtime directories.
 """
+import hashlib
 import json
 import re
 import subprocess
@@ -24,6 +25,11 @@ allowed_domains = {"example.com", "example.org", "example.net", "users.noreply.g
 blocked_parts = {"node_modules", "dist", "bin", "work", "outputs", "backups", "connector", ".ssh"}
 blocked_suffixes = {".sqlite", ".sqlite3", ".db", ".pem", ".p12", ".pfx", ".key", ".log", ".zip", ".png", ".jpg"}
 blocked_names = {"config.json", "connector.json", "runtime-key", ".env", ".DS_Store"}
+# Manually reviewed synthetic images; any content change requires a new review and hash.
+reviewed_binaries = {
+    "docs/assets/hero.png": "41d830793c0ed6f20b15f50daf9e67aa314c0445fca70c599abe9fa9be540289",
+    "docs/assets/hero.zh-CN.png": "960ac3f40abaf30ef36d518fd4ffdd3a2b45604ed7b1aecc9afab6988eab32b8",
+}
 findings = []
 count = 0
 for name in sorted(set(filter(None, names))):
@@ -35,6 +41,8 @@ for name in sorted(set(filter(None, names))):
         findings.append({"file": name, "rule": "symlink-requires-review"})
         continue
     rel = Path(name)
+    if reviewed_binaries.get(name) == hashlib.sha256(path.read_bytes()).hexdigest():
+        continue
     if blocked_parts.intersection(rel.parts) or rel.suffix.lower() in blocked_suffixes or rel.name in blocked_names or rel.name.startswith(".env."):
         findings.append({"file": name, "rule": "private-or-generated-file"})
     try:

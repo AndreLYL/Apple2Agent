@@ -1,0 +1,809 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        width: 1280px;
+        height: 720px;
+        overflow: hidden;
+      }
+      body {
+        font-family:
+          -apple-system, "SF Pro Text", "PingFang SC", "Helvetica Neue",
+          sans-serif;
+        color: #1d1d1f;
+        background:
+          radial-gradient(
+            900px 500px at 15% 0%,
+            rgba(120, 190, 255, 0.28),
+            transparent 60%
+          ),
+          radial-gradient(
+            800px 500px at 100% 100%,
+            rgba(140, 230, 190, 0.3),
+            transparent 60%
+          ),
+          linear-gradient(180deg, #f7f8fb 0%, #eef1f6 100%);
+        -webkit-font-smoothing: antialiased;
+      }
+      .stage {
+        display: grid;
+        grid-template-columns: 300px 300px 420px;
+        gap: 56px;
+        justify-content: center;
+        padding-top: 34px;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-bottom: 18px;
+        height: 28px;
+      }
+      .step b {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: #1d1d1f;
+        color: #fff;
+        font-size: 14px;
+        display: grid;
+        place-items: center;
+      }
+
+      /* Phone */
+      .phone {
+        width: 290px;
+        height: 600px;
+        border-radius: 46px;
+        background: #111;
+        padding: 9px;
+        box-shadow:
+          0 30px 60px -20px rgba(20, 30, 60, 0.35),
+          0 0 0 1px rgba(0, 0, 0, 0.6);
+        position: relative;
+      }
+      .screen {
+        width: 100%;
+        height: 100%;
+        border-radius: 38px;
+        background: #fff;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .island {
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 88px;
+        height: 26px;
+        border-radius: 14px;
+        background: #000;
+      }
+      .status {
+        height: 44px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 26px 0 30px;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .status i {
+        font-style: normal;
+        font-size: 11px;
+        letter-spacing: 1px;
+      }
+      .chat {
+        flex: 1;
+        padding: 6px 16px 0;
+        font-size: 13px;
+        line-height: 1.5;
+        overflow: hidden;
+      }
+      .user {
+        margin-left: auto;
+        width: fit-content;
+        max-width: 82%;
+        background: #dcf5ea;
+        color: #17805b;
+        padding: 9px 13px;
+        border-radius: 18px;
+        margin-bottom: 10px;
+      }
+      .thought {
+        color: #8a8a8e;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+      .tool {
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 10px;
+        color: #3a3a3c;
+        background: #f2f2f5;
+        border: 1px solid #e5e5ea;
+        border-radius: 999px;
+        padding: 3px 9px 3px 7px;
+        margin-bottom: 8px;
+        font-family: "SF Mono", ui-monospace, monospace;
+      }
+      .tool b {
+        font-family: -apple-system, "PingFang SC", sans-serif;
+        font-weight: 600;
+      }
+      .tool::before {
+        content: "";
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #34c759;
+      }
+      .muted {
+        color: #6e6e73;
+      }
+      .date {
+        font-size: 12px;
+        color: #6e6e73;
+        margin: 2px 0 8px;
+      }
+      .event {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
+        padding: 5px 0;
+        border-bottom: 1px solid #f0f0f2;
+      }
+      .event:last-of-type {
+        border-bottom: 0;
+      }
+      .event .bar {
+        width: 3px;
+        border-radius: 2px;
+      }
+      .event .time {
+        width: 42px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .event .cal {
+        font-size: 11px;
+        color: #8a8a8e;
+      }
+      .free {
+        margin-top: 8px;
+        background: #effaf3;
+        color: #1e7a45;
+        border-radius: 12px;
+        padding: 8px 11px;
+        font-size: 12px;
+      }
+      .chips {
+        display: flex;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .chip {
+        border: 1px solid #e0e0e5;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 11.5px;
+      }
+      .chip.dark {
+        background: #1d1d1f;
+        color: #fff;
+        border-color: #1d1d1f;
+      }
+      .mail {
+        display: flex;
+        gap: 8px;
+        padding: 6px 0;
+      }
+      .mail svg {
+        flex: none;
+        margin-top: 3px;
+      }
+      .mail .subj {
+        font-weight: 600;
+        line-height: 1.35;
+      }
+      .mail .meta {
+        font-size: 11px;
+        color: #8a8a8e;
+      }
+      .queued {
+        border: 1px solid #ffd9a8;
+        background: #fff7ec;
+        border-radius: 14px;
+        padding: 9px 12px;
+        font-size: 12px;
+        color: #8a4b00;
+      }
+      .queued strong {
+        display: block;
+        font-size: 12.5px;
+        margin-bottom: 2px;
+      }
+      .queued code {
+        font-family: "SF Mono", ui-monospace, monospace;
+        font-size: 11px;
+      }
+      .input {
+        margin: 0 12px 14px;
+        height: 40px;
+        border-radius: 20px;
+        background: #f2f2f5;
+        display: flex;
+        align-items: center;
+        padding: 0 8px 0 14px;
+        gap: 10px;
+        color: #8a8a8e;
+        font-size: 13px;
+      }
+      .input span {
+        flex: 1;
+      }
+      .input .send {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #1d1d1f;
+        display: grid;
+        place-items: center;
+      }
+
+      /* Mac column */
+      .mac {
+        width: 420px;
+        position: relative;
+        height: 600px;
+      }
+      .term {
+        background: #1e1f24;
+        border-radius: 12px;
+        color: #e6e6e6;
+        font-family: "SF Mono", ui-monospace, monospace;
+        font-size: 12.5px;
+        box-shadow: 0 20px 40px -18px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+      }
+      .bar3 {
+        display: flex;
+        gap: 7px;
+        padding: 10px 12px;
+        align-items: center;
+      }
+      .bar3 span {
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+      }
+      .term .body {
+        padding: 2px 16px 46px;
+        line-height: 1.7;
+      }
+      .term .p {
+        color: #7ee2a8;
+      }
+      .term .dim {
+        color: #8b8e98;
+      }
+      .alert {
+        position: absolute;
+        top: 100px;
+        left: 22px;
+        right: -8px;
+        background: rgba(246, 246, 248, 0.98);
+        border-radius: 14px;
+        box-shadow:
+          0 30px 70px -20px rgba(20, 30, 60, 0.45),
+          0 0 0 1px rgba(0, 0, 0, 0.1);
+        padding: 22px 22px 18px;
+      }
+      .alert .icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 13px;
+        background: linear-gradient(145deg, #3a8dff, #36c98e);
+        display: grid;
+        place-items: center;
+        margin-bottom: 12px;
+        box-shadow: 0 4px 10px rgba(30, 100, 200, 0.25);
+      }
+      .alert h3 {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .alert p {
+        font-size: 12px;
+        color: #48484a;
+        line-height: 1.5;
+      }
+      .alert .op {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #48484a;
+      }
+      .alert .op code {
+        font-family: "SF Mono", ui-monospace, monospace;
+        font-size: 11.5px;
+        background: #e9e9ee;
+        padding: 1px 6px;
+        border-radius: 5px;
+      }
+      .preview {
+        margin-top: 12px;
+        background: #fff;
+        border: 1px solid #dcdce1;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 12.5px;
+        line-height: 1.55;
+      }
+      .preview .row {
+        display: flex;
+        gap: 8px;
+        padding: 2px 0;
+      }
+      .preview .k {
+        width: 64px;
+        color: #8a8a8e;
+        flex: none;
+      }
+      .preview hr {
+        border: 0;
+        border-top: 1px solid #ececf0;
+        margin: 8px 0;
+      }
+      .buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 16px;
+        position: relative;
+      }
+      .btn {
+        min-width: 96px;
+        height: 30px;
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        padding: 0 14px;
+        background: #fff;
+        box-shadow:
+          0 0.5px 1px rgba(0, 0, 0, 0.2),
+          0 0 0 0.5px rgba(0, 0, 0, 0.12);
+      }
+      .btn.default {
+        background: linear-gradient(#3b8cff, #1f6fe8);
+        color: #fff;
+      }
+      .cursor {
+        position: absolute;
+        right: 2px;
+        top: 19px;
+      }
+      .note {
+        position: absolute;
+        right: 26px;
+        bottom: 16px;
+        font-size: 12px;
+        color: #8a8a8e;
+      }
+      [data-lang] {
+        display: none;
+      }
+      html[lang="en"] [data-lang="en"],
+      html[lang="zh"] [data-lang="zh"] {
+        display: revert;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <!-- Calendar -->
+      <div class="col">
+        <div class="step">
+          <b>1</b><span data-lang="en">Ask about your day</span
+          ><span data-lang="zh">问问今天的安排</span>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="status"><span>9:41</span><i>●●● ▮</i></div>
+            <div class="chat">
+              <div class="user">
+                <span data-lang="en">What's on my calendar today?</span
+                ><span data-lang="zh">今天我的日历上有什么安排？</span>
+              </div>
+              <div class="thought">
+                <span data-lang="en">Thought for 8s ›</span
+                ><span data-lang="zh">思考了 8 秒 ›</span>
+              </div>
+              <div class="tool"><b>Apple2Agent</b>calendar_events</div>
+              <div>
+                <span data-lang="en">You have <b>4 events</b> today.</span
+                ><span data-lang="zh">今天共有 <b>4 项日程</b>。</span>
+              </div>
+              <div class="date">
+                <span data-lang="en">Tuesday, November 17</span
+                ><span data-lang="zh">11 月 17 日 · 星期二</span>
+              </div>
+              <div class="event">
+                <div class="bar" style="background: #0a84ff"></div>
+                <div class="time">09:30</div>
+                <div>
+                  <div>
+                    <span data-lang="en">Team standup</span
+                    ><span data-lang="zh">团队站会</span>
+                  </div>
+                  <div class="cal">
+                    <span data-lang="en">Work</span
+                    ><span data-lang="zh">工作</span>
+                  </div>
+                </div>
+              </div>
+              <div class="event">
+                <div class="bar" style="background: #ff9f0a"></div>
+                <div class="time">12:00</div>
+                <div>
+                  <div>
+                    <span data-lang="en">Lunch with Mia</span
+                    ><span data-lang="zh">和 Mia 吃午饭</span>
+                  </div>
+                  <div class="cal">
+                    <span data-lang="en">Personal</span
+                    ><span data-lang="zh">个人</span>
+                  </div>
+                </div>
+              </div>
+              <div class="event">
+                <div class="bar" style="background: #0a84ff"></div>
+                <div class="time">15:00</div>
+                <div>
+                  <div>
+                    <span data-lang="en">Design review</span
+                    ><span data-lang="zh">设计评审</span>
+                  </div>
+                  <div class="cal">
+                    <span data-lang="en">Work</span
+                    ><span data-lang="zh">工作</span>
+                  </div>
+                </div>
+              </div>
+              <div class="event">
+                <div class="bar" style="background: #ff9f0a"></div>
+                <div class="time">19:00</div>
+                <div>
+                  <div>
+                    <span data-lang="en">Gym</span
+                    ><span data-lang="zh">健身</span>
+                  </div>
+                  <div class="cal">
+                    <span data-lang="en">Personal</span
+                    ><span data-lang="zh">个人</span>
+                  </div>
+                </div>
+              </div>
+              <div class="free">
+                <span data-lang="en">Free: 10:00–12:00 · 13:00–15:00</span
+                ><span data-lang="zh">空闲：10:00–12:00 · 13:00–15:00</span>
+              </div>
+              <div class="chips">
+                <div class="chip dark">
+                  <span data-lang="en">Next 7 days</span
+                  ><span data-lang="zh">查看未来 7 天</span>
+                </div>
+                <div class="chip">
+                  <span data-lang="en">Find 30 min</span
+                  ><span data-lang="zh">找 30 分钟空档</span>
+                </div>
+              </div>
+            </div>
+            <div class="input">
+              <span
+                ><span data-lang="en">Ask anything</span
+                ><span data-lang="zh">有问题，尽管问</span></span
+              >
+              <div class="send">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <path
+                    d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                    stroke="#fff"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mail -->
+      <div class="col">
+        <div class="step">
+          <b>2</b><span data-lang="en">Work through your inbox</span
+          ><span data-lang="zh">处理你的收件箱</span>
+        </div>
+        <div class="phone">
+          <div class="screen">
+            <div class="island"></div>
+            <div class="status"><span>9:43</span><i>●●● ▮</i></div>
+            <div class="chat">
+              <div class="user">
+                <span data-lang="en">Summarize my 3 latest emails</span
+                ><span data-lang="zh">总结一下我最近 3 封邮件</span>
+              </div>
+              <div class="tool"><b>Apple2Agent</b>mail_search_messages</div>
+              <div class="mail">
+                <svg width="14" height="12" viewBox="0 0 14 12">
+                  <rect
+                    x="0.75"
+                    y="0.75"
+                    width="12.5"
+                    height="10.5"
+                    rx="2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                  <path
+                    d="m1.5 2 5.5 4.2L12.5 2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                </svg>
+                <div>
+                  <div class="subj">
+                    <span data-lang="en">Your flight to Osaka is confirmed</span
+                    ><span data-lang="zh">你的大阪航班已确认</span>
+                  </div>
+                  <div class="meta">
+                    <span data-lang="en">Sky Air · 08:12 · Unread</span
+                    ><span data-lang="zh">Sky Air · 08:12 · 未读</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mail">
+                <svg width="14" height="12" viewBox="0 0 14 12">
+                  <rect
+                    x="0.75"
+                    y="0.75"
+                    width="12.5"
+                    height="10.5"
+                    rx="2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                  <path
+                    d="m1.5 2 5.5 4.2L12.5 2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                </svg>
+                <div>
+                  <div class="subj">
+                    <span data-lang="en"
+                      >Q4 planning doc: feedback by Friday</span
+                    ><span data-lang="zh">Q4 规划文档：周五前请反馈</span>
+                  </div>
+                  <div class="meta">
+                    <span data-lang="en">Alex Chen · Yesterday</span
+                    ><span data-lang="zh">Alex Chen · 昨天</span>
+                  </div>
+                </div>
+              </div>
+              <div class="mail">
+                <svg width="14" height="12" viewBox="0 0 14 12">
+                  <rect
+                    x="0.75"
+                    y="0.75"
+                    width="12.5"
+                    height="10.5"
+                    rx="2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                  <path
+                    d="m1.5 2 5.5 4.2L12.5 2"
+                    fill="none"
+                    stroke="#3a3a3c"
+                    stroke-width="1.3"
+                  />
+                </svg>
+                <div>
+                  <div class="subj">
+                    <span data-lang="en">Invoice #2041 from Studio Nine</span
+                    ><span data-lang="zh">Studio Nine 发票 #2041</span>
+                  </div>
+                  <div class="meta">
+                    <span data-lang="en">Studio Nine · Yesterday</span
+                    ><span data-lang="zh">Studio Nine · 昨天</span>
+                  </div>
+                </div>
+              </div>
+              <div class="muted" style="margin: 4px 0 10px">
+                <span data-lang="en">Alex is waiting on your feedback.</span
+                ><span data-lang="zh">Alex 在等你的反馈。</span>
+              </div>
+              <div class="user">
+                <span data-lang="en">Reply that I'll send notes Thursday</span
+                ><span data-lang="zh">回复 Alex：我周四发意见</span>
+              </div>
+              <div class="tool"><b>Apple2Agent</b>mail_reply_to_message</div>
+              <div class="queued">
+                <strong
+                  ><span data-lang="en">⏳ Reply queued for your approval</span
+                  ><span data-lang="zh">⏳ 回复已进入待审批</span></strong
+                >
+                <span data-lang="en">Not sent yet. Approve it on your Mac.</span
+                ><span data-lang="zh">尚未发送，请在 Mac 上批准。</span>
+              </div>
+            </div>
+            <div class="input">
+              <span
+                ><span data-lang="en">Ask anything</span
+                ><span data-lang="zh">有问题，尽管问</span></span
+              >
+              <div class="send">
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <path
+                    d="M6 10V2M2.5 5.5 6 2l3.5 3.5"
+                    stroke="#fff"
+                    stroke-width="1.6"
+                    fill="none"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Approval -->
+      <div class="col">
+        <div class="step">
+          <b>3</b><span data-lang="en">Approve every send on your Mac</span
+          ><span data-lang="zh">每次发送都在 Mac 上批准</span>
+        </div>
+        <div class="mac">
+          <div class="term">
+            <div class="bar3">
+              <span style="background: #ff5f57"></span
+              ><span style="background: #febc2e"></span
+              ><span style="background: #28c840"></span>
+            </div>
+            <div class="body">
+              <div><span class="p">~ $</span> apple2agent review 7f3c2a9e</div>
+              <div class="dim">
+                <span data-lang="en">Opening native approval window…</span
+                ><span data-lang="zh">正在打开原生审批窗口…</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert">
+            <div class="icon">
+              <svg width="26" height="26" viewBox="0 0 24 24">
+                <path
+                  d="M12 2.5 4.5 5.5v6c0 4.6 3.1 8.6 7.5 10 4.4-1.4 7.5-5.4 7.5-10v-6L12 2.5Z"
+                  fill="#fff"
+                  opacity=".95"
+                />
+                <path
+                  d="m8.5 12.2 2.4 2.4 4.6-4.8"
+                  stroke="#2f86f5"
+                  stroke-width="2"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <h3>
+              <span data-lang="en">Review Apple2Agent action</span
+              ><span data-lang="zh">审核 Apple2Agent 操作</span>
+            </h3>
+            <p>
+              <span data-lang="en"
+                >Check the target and full content below. Only “Allow once”
+                authorizes this single action.</span
+              ><span data-lang="zh"
+                >请核对下方的目标与完整内容。只有点击允许，才会授权这一次操作。</span
+              >
+            </p>
+            <div class="op">
+              <span data-lang="en">Operation:</span
+              ><span data-lang="zh">操作：</span> <code>mail_send</code>
+            </div>
+            <div class="preview">
+              <div class="row">
+                <span class="k"
+                  ><span data-lang="en">From</span
+                  ><span data-lang="zh">发件人</span></span
+                ><span>me@example.com</span>
+              </div>
+              <div class="row">
+                <span class="k"
+                  ><span data-lang="en">To</span
+                  ><span data-lang="zh">收件人</span></span
+                ><span>alex.chen@example.com</span>
+              </div>
+              <div class="row">
+                <span class="k"
+                  ><span data-lang="en">Subject</span
+                  ><span data-lang="zh">主题</span></span
+                ><span
+                  ><span data-lang="en">Re: Q4 planning doc</span
+                  ><span data-lang="zh">Re: Q4 规划文档</span></span
+                >
+              </div>
+              <hr />
+              <div>
+                <span data-lang="en"
+                  >Hi Alex,<br />I'll send my notes on Thursday.<br />Thanks!</span
+                ><span data-lang="zh"
+                  >Alex 你好，<br />我会在周四把意见发给你。<br />谢谢！</span
+                >
+              </div>
+            </div>
+            <div class="buttons">
+              <div class="btn default">
+                <span data-lang="en">Deny</span><span data-lang="zh">拒绝</span>
+              </div>
+              <div class="btn">
+                <span data-lang="en">Allow once</span
+                ><span data-lang="zh">允许这一次</span>
+              </div>
+              <svg class="cursor" width="18" height="24" viewBox="0 0 18 24">
+                <path
+                  d="M1.5 1.5v17.2l4.3-4 2.9 6.6 2.9-1.3-2.8-6.4h6L1.5 1.5Z"
+                  fill="#000"
+                  stroke="#fff"
+                  stroke-width="1.4"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      <span data-lang="en">Illustration · sample data</span
+      ><span data-lang="zh">示意图 · 示例数据</span>
+    </div>
+    <script>
+      document.documentElement.lang = location.hash === "#zh" ? "zh" : "en";
+    </script>
+  </body>
+</html>

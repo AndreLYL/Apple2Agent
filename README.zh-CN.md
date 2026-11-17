@@ -15,6 +15,8 @@
 
 [English](README.md) · [快速开始](#快速开始) · [发送审批流程](#邮件发送如何审批) · [兼容性](docs/compatibility.md) · [隐私说明](docs/permissions-and-privacy.md)
 
+<img src="docs/assets/hero.zh-CN.png" alt="示意图：Agent 通过 Apple2Agent 读取今天的日程和最近的邮件，准备回复后，在 Mac 原生窗口中等待批准" width="100%">
+
 </div>
 
 ---
@@ -52,7 +54,7 @@
 | 👤 通讯录   | 搜索、生日、分组，增删改（CardDAV）                                                |
 | 📝 备忘录   | 读取、新建、追加、移动、删除，并自动备份                                           |
 | 📁 文件     | 限定目录、文本提取、条件写入、移到废纸篓                                           |
-| 💬 信息     | 读取选定会话，经批准发送 iMessage（实验性，默认不启用）                            |
+| 💬 信息     | 读取选定会话，经批准发送 iMessage                                                  |
 
 各模块的验证情况和限制见[兼容性矩阵](docs/compatibility.md)。
 
