@@ -123,19 +123,21 @@ async function main() {
     try {
       // Copy app directories recursively: their Info.plist, signatures and JS
       // resources are part of the runtime, not optional build-time files.
-      for (const name of [
-        "dist",
-        "bin",
-        "package.json",
-        "package-lock.json",
-      ])
+      for (const name of ["dist", "bin", "package.json", "package-lock.json"])
         await cp(join(root, name), join(staging, name), {
           recursive: true,
           verbatimSymlinks: true,
         });
       execFileSync(
         process.execPath,
-        [process.env.npm_execpath || "", "ci", "--omit=dev", "--ignore-scripts", "--no-audit", "--no-fund"],
+        [
+          process.env.npm_execpath || "",
+          "ci",
+          "--omit=dev",
+          "--ignore-scripts",
+          "--no-audit",
+          "--no-fund",
+        ],
         { cwd: staging, stdio: "pipe", timeout: 120000 },
       );
       await verify(staging, sourceManifest);
