@@ -44,17 +44,17 @@ Giving an agent your inbox and calendar is useful right up until it emails the w
 
 ## Modules
 
-| Module       | What the agent can do                                                                                      | Status                                            |
-| ------------ | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| 📅 Calendar  | List, search, create, update and delete events (including recurring ones), find free time, check conflicts | ✅ Verified live (iCloud)                         |
-| ✉️ Mail      | Search, read, threads, drafts, approved send/reply/forward, move/mark, bulk actions with undo              | ✅ Read and approved send verified live (QQ Mail) |
-| ⏰ Reminders | Lists, tasks, due dates, repeats, alarms, completion                                                       | ✅ Create and device sync verified live           |
-| 👤 Contacts  | Search, birthdays, groups, create/update/delete (CardDAV)                                                  | 🧪 Tested offline, live write acceptance pending  |
-| 📝 Notes     | Read, create, append, move, delete with backups                                                            | 🧪 Tested offline, live write acceptance pending  |
-| 📁 Files     | Scoped folders, text extraction, conditional writes, trash                                                 | 🧪 Tested offline, live write acceptance pending  |
-| 💬 Messages  | Read selected chats, approved iMessage sending                                                             | ⚠️ Experimental, off by default                   |
+| Module       | What the agent can do                                                                                      |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| 📅 Calendar  | List, search, create, update and delete events (including recurring ones), find free time, check conflicts |
+| ✉️ Mail      | Search, read, threads, drafts, approved send/reply/forward, move/mark, bulk actions with undo              |
+| ⏰ Reminders | Lists, tasks, due dates, repeats, alarms, completion                                                       |
+| 👤 Contacts  | Search, birthdays, groups, create/update/delete (CardDAV)                                                  |
+| 📝 Notes     | Read, create, append, move, delete with backups                                                            |
+| 📁 Files     | Scoped folders, text extraction, conditional writes, trash                                                 |
+| 💬 Messages  | Read selected chats, approved iMessage sending (experimental, off by default)                              |
 
-"Verified live" means tested against a real account and device, not just unit tests. See the [compatibility matrix](docs/compatibility.md) for exact limits.
+See the [compatibility matrix](docs/compatibility.md) for per-module verification and limits.
 
 ## Quick start
 
