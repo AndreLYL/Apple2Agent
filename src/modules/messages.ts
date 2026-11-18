@@ -107,6 +107,16 @@ export class MessagesModule implements Module {
       "search",
     );
     add(
+      "imessage_list_unread_sms",
+      z
+        .object({
+          limit: z.number().int().min(1).max(100).default(50),
+          cursor: id.optional(),
+        })
+        .strict(),
+      "unread_sms",
+    );
+    add(
       "imessage_send_message",
       z
         .object({
@@ -225,8 +235,15 @@ export class MessagesModule implements Module {
           return this.native.call(ctx, "automation", "imessage_send", p);
         },
       );
+    if (op === "unread_sms" && !ctx.grants?.message_chats?.length)
+      throw new AppError(
+        "NOT_CONFIGURED",
+        "No Messages chats are authorized for reading.",
+        "Select exact chats in local Messages setup; sending permission is not required.",
+      );
     const db = this.db();
     try {
+      if (op === "unread_sms") return this.unreadSMS(db, ctx, a);
       const chats = this.chats(db, ctx);
       if (op === "chats")
         return {
@@ -408,6 +425,132 @@ export class MessagesModule implements Module {
     } finally {
       db.close();
     }
+  }
+  private unreadSMS(
+    db: DatabaseSync,
+    ctx: AccessContext,
+    a: { limit: number; cursor?: string },
+  ) {
+    const columns = new Set(
+      (
+        db.prepare("PRAGMA table_info(message)").all() as { name: string }[]
+      ).map((r) => r.name),
+    );
+    if (!columns.has("is_read"))
+      throw new AppError(
+        "SCHEMA_UNSUPPORTED",
+        "This Messages database has no explicit is_read field.",
+        "Unread SMS cannot be inferred from delivery or read-receipt timestamps.",
+      );
+    const grants = [...new Set(ctx.grants!.message_chats!)].sort();
+    const scope = hash(grants);
+    const cursor = a.cursor
+      ? z
+          .object({
+            scope: z.string(),
+            date: z.string().regex(/^-?\d{1,19}$/),
+            rowid: z.string().regex(/^\d{1,19}$/),
+            expires: z.number().int(),
+          })
+          .parse(this.refs.decode("unread-sms-cursor", a.cursor))
+      : undefined;
+    if (cursor && (cursor.scope !== scope || cursor.expires < Date.now()))
+      throw new AppError(
+        "STALE_REFERENCE",
+        "The unread SMS cursor expired or its authorized scope changed.",
+        "Restart without a cursor.",
+      );
+    const authorized = `EXISTS (SELECT 1 FROM chat_message_join j JOIN chat c ON c.ROWID=j.chat_id
+      WHERE j.message_id=m.ROWID AND c.guid IN (SELECT value FROM json_each(?)))`;
+    const excluded = ["is_system_message", "is_spam", "date_retracted"]
+      .filter((c) => columns.has(c))
+      .map((c) => `AND COALESCE(m.${c},0)=0`)
+      .join(" ");
+    const reactions = columns.has("associated_message_type")
+      ? "AND NOT (COALESCE(m.associated_message_type,0)>=2000 AND m.associated_message_type<4000)"
+      : "";
+    const eligible = `m.service='SMS' AND m.is_from_me=0 AND ${authorized} ${excluded} ${reactions}`;
+    const grantJSON = JSON.stringify(grants);
+    // Unknown read states are never silently treated as read or unread.
+    const unknown = !!db
+      .prepare(
+        `SELECT 1 FROM message m WHERE ${eligible}
+      AND (m.is_read IS NULL OR m.is_read NOT IN (0,1)) LIMIT 1`,
+      )
+      .get(grantJSON);
+    const body = columns.has("attributedBody")
+      ? "CASE WHEN length(m.attributedBody)<=1048576 THEN m.attributedBody END"
+      : "NULL";
+    const query = db.prepare(`WITH unread AS (
+      SELECT m.ROWID AS rowid,m.guid,substr(m.text,1,8192) AS text,
+        length(m.text)>8192 AS text_truncated,${body} AS attributedBody,
+        CASE WHEN abs(m.date)<100000000000 THEN m.date*1000000000 ELSE m.date END AS sort_date
+      FROM message m WHERE ${eligible} AND m.is_read=0
+    ) SELECT * FROM unread ${cursor ? "WHERE sort_date < ? OR (sort_date = ? AND rowid < ?)" : ""}
+      ORDER BY sort_date DESC,rowid DESC LIMIT ?`);
+    query.setReadBigInts(true);
+    const position = cursor
+      ? [BigInt(cursor.date), BigInt(cursor.date), BigInt(cursor.rowid)]
+      : [];
+    const rows = query.all(grantJSON, ...position, a.limit + 1) as {
+      rowid: bigint;
+      guid: string;
+      text: string | null;
+      text_truncated: bigint | null;
+      attributedBody?: Uint8Array;
+      sort_date: bigint;
+    }[];
+    const page = rows.slice(0, a.limit);
+    const chatRefs =
+      db.prepare(`SELECT DISTINCT c.guid FROM chat c JOIN chat_message_join j ON j.chat_id=c.ROWID
+      WHERE j.message_id=? AND c.guid IN (SELECT value FROM json_each(?)) ORDER BY c.guid`);
+    const messages = page.map((r) => {
+      ctx.signal.throwIfAborted();
+      const text = r.text || decodeAttributedBody(r.attributedBody);
+      return {
+        id: r.guid,
+        chat_ids: (chatRefs.all(r.rowid, grantJSON) as { guid: string }[]).map(
+          (c) => this.refs.encode("message-chat", { guid: c.guid }),
+        ),
+        service: "SMS",
+        from_me: false,
+        unread: true,
+        date: new Date(epoch + Number(r.sort_date / 1000000n)).toISOString(),
+        text: text?.slice(0, 8192) ?? null,
+        body_supported: text !== undefined,
+        truncated: !!r.text_truncated || (text?.length ?? 0) > 8192,
+      };
+    });
+    const last = page.at(-1);
+    const hasMore = rows.length > a.limit;
+    return {
+      messages,
+      next_cursor:
+        hasMore && last
+          ? this.refs.encode("unread-sms-cursor", {
+              scope,
+              date: last.sort_date.toString(),
+              rowid: last.rowid.toString(),
+              expires: Date.now() + 900000,
+            })
+          : null,
+      complete:
+        !hasMore &&
+        !unknown &&
+        messages.every((m) => m.body_supported && !m.truncated),
+      has_more: hasMore,
+      unknown_read_states: unknown,
+      unsupported_bodies: messages.filter((m) => !m.body_supported).length,
+      read_state_source: "message.is_read",
+      scope: {
+        authorized_chats: grants.length,
+        service: "SMS",
+        synced_to_this_mac_only: true,
+      },
+      consistency:
+        "live; restart without a cursor for newly arrived or changed messages",
+      attachment_content_supported: false,
+    };
   }
   private checkRecipients(ctx: AccessContext, handles: string[]) {
     if (!handles.length)

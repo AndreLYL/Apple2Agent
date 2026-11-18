@@ -71,11 +71,20 @@ async function discover(profile: Profile) {
 test("discovery preserves every profile's names, schemas and defaults", async () => {
   for (const profile of Object.keys(baseline) as Profile[]) {
     const tools = await discover(profile);
-    assert.equal(tools.length, baseline[profile].count, profile);
-    const contracts = tools.map(({ name, inputSchema }) => ({
-      name,
-      inputSchema,
-    }));
+    const added = tools.filter((t) => t.name === "imessage_list_unread_sms");
+    assert.equal(added.length, ["all", "readonly"].includes(profile) ? 1 : 0);
+    assert.equal(tools.length, baseline[profile].count + added.length, profile);
+    if (added.length) {
+      assert.equal(added[0]!.annotations!.readOnlyHint, true);
+      assert.equal(added[0]!.annotations!.destructiveHint, false);
+      assert.equal(added[0]!.inputSchema.additionalProperties, false);
+    }
+    const contracts = tools
+      .filter((t) => t.name !== "imessage_list_unread_sms")
+      .map(({ name, inputSchema }) => ({
+        name,
+        inputSchema,
+      }));
     assert.equal(
       createHash("sha256").update(JSON.stringify(contracts)).digest("hex"),
       baseline[profile].hash,

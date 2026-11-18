@@ -33,3 +33,9 @@ Sending follows: frozen request → native human review → execute the same act
 ## Sharing diagnostics
 
 Share only versions, error codes and synthetic reproductions. Do not upload config, signed resource references, operation databases, raw protocol traces, account screenshots or content backups. Review all output before posting it.
+
+## Unread SMS
+
+`imessage_list_unread_sms` is available in `readonly` and `all` when Messages is enabled. It reads incoming records labeled SMS across explicitly selected chats already synced to this Mac, using `message.is_read = 0`. It does not send, mark messages as read, or grant access to new chats. No sender allowlist is needed for reading.
+
+The query defaults to 50 messages (maximum 100), newest first. Follow `next_cursor` until it is null; `complete=false` can also indicate unknown read states, unsupported bodies or truncated text. Results reflect local state, not a live query of the iPhone. Pagination is not a frozen snapshot: restart without a cursor for new arrivals or changed read states. Cursors expire after 15 minutes and are invalidated by changed chat grants. Missing `is_read` produces `SCHEMA_UNSUPPORTED`; zero authorized chats produces `NOT_CONFIGURED`, not an empty inbox claim. Neither delivery nor read-receipt timestamps are used to infer unread state.

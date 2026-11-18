@@ -54,7 +54,7 @@ Giving an agent your inbox and calendar is useful right up until it emails the w
 | 👤 Contacts  | Search, birthdays, groups, create/update/delete (CardDAV)                                                  |
 | 📝 Notes     | Read, create, append, move, delete with backups                                                            |
 | 📁 Files     | Scoped folders, text extraction, conditional writes, trash                                                 |
-| 💬 Messages  | Read selected chats, approved iMessage sending                                                             |
+| 💬 Messages  | Read selected chats and incoming unread SMS, approved iMessage sending                                     |
 
 See the [compatibility matrix](docs/compatibility.md) for per-module verification and limits.
 
@@ -189,9 +189,9 @@ A profile limits which tools the agent can see. Your resource selections still a
 
 | Profile    | Tools (all modules enabled) | Use it for                                                                   |
 | ---------- | --------------------------- | ---------------------------------------------------------------------------- |
-| `readonly` | 44                          | First run and everyday lookups. No writes of any kind.                       |
+| `readonly` | 45                          | First run and everyday lookups. No writes of any kind.                       |
 | `calendar` | 9                           | Scheduling assistants. Includes calendar writes to calendars you authorized. |
-| `all`      | 91                          | Full access to every module you enabled.                                     |
+| `all`      | 92                          | Full access to every module you enabled.                                     |
 
 Fewer enabled modules means fewer tools. Smaller tool lists also help the model pick the right tool.
 
