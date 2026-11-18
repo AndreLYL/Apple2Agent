@@ -255,3 +255,45 @@ test("unread SMS bounds text and flags unsupported bodies without hiding the mes
   assert.equal(r.unsupported_bodies, 1);
   assert.equal(r.complete, false);
 });
+
+test("selecting a short-code chat enables reads without authorizing SMS or iMessage sends", async (t) => {
+  const { messageSetupChoices } =
+    await import("../src/core/message-choices.js");
+  const f = await fixture(t);
+  f.add("short-code-unread");
+  const choices = messageSetupChoices(f.db);
+  const selected = choices.find(
+    (c) => c.kind === "message_chats" && c.id === "sms-a",
+  )!;
+  assert.ok(selected);
+  assert.equal(
+    choices.filter((c) => c.kind === "message_recipients").length,
+    0,
+  );
+  // Model selecting only the read-chat checkbox in an isolated config.
+  f.ctx.grants = { message_chats: [selected.id], message_recipients: [] };
+  assert.equal((await f.run()).messages[0].text, "short-code-unread");
+  const send = f.module.tools.imessage_send_message!;
+  const smsArgs = send.schema.parse({
+    chat_id: f.refs.encode("message-chat", { guid: selected.id }),
+    text: "synthetic",
+    request_id: "00000000-0000-4000-a000-000000000001",
+  });
+  await assert.rejects(send.run(f.ctx, smsArgs), { code: "PERMISSION_DENIED" });
+  // Even a caller with the existing send capability cannot send to an SMS chat.
+  f.ctx.capabilities.add("messages:send");
+  await assert.rejects(send.run(f.ctx, smsArgs), {
+    code: "SERVICE_UNSUPPORTED",
+  });
+  f.db.prepare("INSERT INTO handle VALUES(?)").run("sender@example.com");
+  f.db.exec("INSERT INTO chat_handle_join VALUES(4,2)");
+  f.ctx.grants.message_chats = ["im-chat"];
+  await assert.rejects(
+    send.run(f.ctx, {
+      ...smsArgs,
+      chat_id: f.refs.encode("message-chat", { guid: "im-chat" }),
+    }),
+    { code: "PERMISSION_DENIED" },
+  );
+  assert.deepEqual(f.state.entries("approval:"), []);
+});

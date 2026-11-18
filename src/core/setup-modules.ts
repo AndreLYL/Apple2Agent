@@ -1,3 +1,4 @@
+import { messageSetupChoices } from "./message-choices.js";
 import { join } from "node:path";
 import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -121,36 +122,7 @@ export async function configureModule(
       );
     }
     try {
-      const rows = db
-        .prepare(
-          "SELECT ROWID AS rowid,guid,display_name,service_name FROM chat LIMIT 1000",
-        )
-        .all() as any[];
-      const handles = new Set<string>();
-      for (const c of rows) {
-        const people = (
-          db
-            .prepare(
-              "SELECT h.id FROM handle h JOIN chat_handle_join j ON j.handle_id=h.ROWID WHERE j.chat_id=?",
-            )
-            .all(c.rowid) as any[]
-        ).map((r) => r.id);
-        if (!people.length || people.some((p) => !/@|^\+\d{6}/.test(p)))
-          continue;
-        add(
-          "message_chats",
-          c.guid,
-          `${c.service_name}：${c.display_name || people.join(", ")}`,
-        );
-        if (c.service_name === "iMessage")
-          people.forEach((h) => handles.add(h));
-      }
-      for (const h of handles)
-        add(
-          "message_recipients",
-          h,
-          `允许审核后向这个精确身份发 iMessage：${h}`,
-        );
+      choices.push(...messageSetupChoices(db));
     } finally {
       db.close();
     }
