@@ -65,10 +65,12 @@ export interface ResourceGrants {
   notes_folders?: readonly string[];
   denied_notes_folders?: readonly string[];
   drive_roots?: readonly string[];
+  sms_read_scope?: "selected" | "all_sms";
   message_chats?: readonly string[];
   message_recipients?: readonly string[];
   message_never_send?: readonly string[];
 }
+export type ResourceGrantKind = Exclude<keyof ResourceGrants, "sms_read_scope">;
 export interface AccessContext {
   owner_id: string;
   account_id: string;
@@ -99,10 +101,11 @@ export function profileCapabilities(
 }
 export function requireGrant(
   ctx: AccessContext,
-  kind: keyof ResourceGrants,
+  kind: ResourceGrantKind,
   id: string,
 ) {
-  if (!ctx.grants?.[kind]?.includes(id))
+  const ids = ctx.grants?.[kind];
+  if (!Array.isArray(ids) || !ids.includes(id))
     throw new AppError(
       "PERMISSION_DENIED",
       "The resource is outside the configured grant.",

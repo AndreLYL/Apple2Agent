@@ -47,6 +47,7 @@ export const ConfigSchema = z
         notes_folders: z.array(z.string()).optional(),
         denied_notes_folders: z.array(z.string()).optional(),
         drive_roots: z.array(z.string()).optional(),
+        sms_read_scope: z.enum(["selected", "all_sms"]).optional(),
         message_chats: z.array(z.string()).optional(),
         message_recipients: z.array(z.string()).optional(),
         message_never_send: z.array(z.string()).optional(),

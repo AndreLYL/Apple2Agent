@@ -2,7 +2,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 import {
   authorize,
   requireGrant,
-  type ResourceGrants,
+  type ResourceGrantKind,
   type AccessContext,
   type Capability,
   type Identity,
@@ -23,7 +23,7 @@ interface Action {
   state:
     "pending" | "approved" | "rejected" | "released" | "executed" | "unknown";
   receipt?: unknown;
-  grants?: { kind: keyof ResourceGrants; id: string }[];
+  grants?: { kind: ResourceGrantKind; id: string }[];
 }
 /** review() is a trusted local API. It is never registered as an MCP tool. */
 export class ApprovalStore {

@@ -297,3 +297,77 @@ test("selecting a short-code chat enables reads without authorizing SMS or iMess
   );
   assert.deepEqual(f.state.entries("approval:"), []);
 });
+
+test("automatic SMS scope admits a new number on the next query and limits mixed history to SMS", async (t) => {
+  const f = await fixture(t);
+  f.ctx.grants = {
+    sms_read_scope: "all_sms",
+    message_chats: [],
+    message_recipients: [],
+  };
+  const call = (name: string, args: unknown) => {
+    const tool = f.module.tools[name]!;
+    return tool.run(f.ctx, tool.schema.parse(args));
+  };
+  assert.equal((await f.run()).messages.length, 0);
+  const rowid = Number(
+    f.db
+      .prepare("INSERT INTO chat VALUES(?,?,?)")
+      .run("new-number", "Fixture", "SMS").lastInsertRowid,
+  );
+  f.add("first-incoming-sms", {}, rowid);
+  assert.deepEqual(
+    (await f.run()).messages.map((m: any) => m.id),
+    ["first-incoming-sms"],
+  );
+  f.add("secret-imessage", { service: "iMessage" }, 4);
+  const chat_id = f.refs.encode("message-chat", { guid: "im-chat" });
+  const args = {
+    chat_id,
+    since: "2026-11-17T00:00:00Z",
+    before: "2026-11-19T00:00:00Z",
+  };
+  await assert.rejects(call("imessage_read_chat", args), {
+    code: "PERMISSION_DENIED",
+  });
+  f.add("mixed-sms", {}, 4);
+  f.add("private-rcs", { service: "RCS" }, 4);
+  const page = await f.run({ limit: 1 });
+  assert.equal(page.scope.sms_read_scope, "all_sms");
+  const listed = await call("imessage_list_chats", {});
+  assert.ok(listed.chats.some((c: any) => c.chat_id === chat_id));
+  assert.deepEqual(
+    (await call("imessage_read_chat", args)).messages.map((m: any) => m.id),
+    ["mixed-sms"],
+  );
+  assert.equal(
+    (await call("imessage_search_messages", { ...args, query: "secret" }))
+      .messages.length,
+    0,
+  );
+  // Even a caller with send capability and an approved recipient needs an explicit chat grant.
+  f.ctx.capabilities = new Set(["messages:read", "messages:send"]);
+  f.ctx.grants.message_recipients = ["sender@example.com"];
+  f.db.exec(
+    "INSERT INTO handle VALUES('sender@example.com'); INSERT INTO chat_handle_join VALUES(4,2)",
+  );
+  await assert.rejects(
+    call("imessage_send_message", {
+      chat_id,
+      text: "test",
+      request_id: "00000000-0000-4000-a000-000000000001",
+    }),
+    { code: "PERMISSION_DENIED" },
+  );
+  assert.deepEqual(f.state.entries("approval:"), []);
+  f.ctx.grants = { sms_read_scope: "selected", message_chats: ["sms-a"] };
+  assert.equal((await f.run()).messages.length, 0);
+  await assert.rejects(f.run({ cursor: page.next_cursor }), {
+    code: "STALE_REFERENCE",
+  });
+  await assert.rejects(call("imessage_read_chat", args), {
+    code: "PERMISSION_DENIED",
+  });
+  f.ctx.grants = { sms_read_scope: "all_sms", message_chats: ["im-chat"] };
+  assert.equal((await call("imessage_read_chat", args)).messages.length, 3);
+});

@@ -171,12 +171,28 @@ export class MessagesModule implements Module {
       );
     }
   }
-  private chats(db: DatabaseSync, ctx: AccessContext) {
+  private readableChatIds(db: DatabaseSync, ctx: AccessContext) {
+    const ids = new Set(ctx.grants?.message_chats);
+    if (ctx.grants?.sms_read_scope === "all_sms") {
+      // A Mac can label a chat iMessage even when the incoming record is SMS.
+      const rows = db
+        .prepare(
+          `SELECT guid FROM chat WHERE guid IS NOT NULL AND guid <> ''
+        AND (service_name = 'SMS' OR ROWID IN (
+          SELECT j.chat_id FROM chat_message_join j JOIN message m ON m.ROWID=j.message_id
+          WHERE m.service='SMS'))`,
+        )
+        .all() as { guid: string }[];
+      for (const { guid } of rows) ids.add(guid);
+    }
+    return ids;
+  }
+  private chats(db: DatabaseSync, ids: ReadonlySet<string>) {
     const rows = db
       .prepare("SELECT ROWID AS rowid,guid,display_name,service_name FROM chat")
       .all() as any[];
     return rows
-      .filter((r) => ctx.grants?.message_chats?.includes(r.guid))
+      .filter((r) => ids.has(r.guid))
       .map((r) => ({
         ...r,
         participants: (
@@ -196,7 +212,7 @@ export class MessagesModule implements Module {
     try {
       return {
         status: "ready",
-        authorized_chats: this.chats(db, ctx).length,
+        authorized_chats: this.chats(db, this.readableChatIds(db, ctx)).length,
         sms_scope: "only messages already synced to this Mac",
         send_service: "iMessage only",
       };
@@ -222,7 +238,9 @@ export class MessagesModule implements Module {
           this.checkRecipients(ctx, p.handles);
           const db = this.db();
           try {
-            const current = this.chats(db, ctx).find((c) => c.guid === p.guid);
+            const current = this.chats(db, new Set([p.guid])).find(
+              (c) => c.guid === p.guid,
+            );
             if (
               !current ||
               current.service_name !== "iMessage" ||
@@ -235,7 +253,11 @@ export class MessagesModule implements Module {
           return this.native.call(ctx, "automation", "imessage_send", p);
         },
       );
-    if (op === "unread_sms" && !ctx.grants?.message_chats?.length)
+    if (
+      op === "unread_sms" &&
+      !ctx.grants?.message_chats?.length &&
+      ctx.grants?.sms_read_scope !== "all_sms"
+    )
       throw new AppError(
         "NOT_CONFIGURED",
         "No Messages chats are authorized for reading.",
@@ -243,9 +265,12 @@ export class MessagesModule implements Module {
       );
     const db = this.db();
     try {
-      if (op === "unread_sms") return this.unreadSMS(db, ctx, a);
-      const chats = this.chats(db, ctx);
-      if (op === "chats")
+      const readableIds = send
+        ? new Set(ctx.grants?.message_chats)
+        : this.readableChatIds(db, ctx);
+      if (op === "unread_sms") return this.unreadSMS(db, ctx, a, readableIds);
+      if (op === "chats") {
+        const chats = this.chats(db, readableIds);
         return {
           chats: chats.slice(0, a.limit).map((c) => ({
             chat_id: this.refs.encode("message-chat", { guid: c.guid }),
@@ -256,9 +281,15 @@ export class MessagesModule implements Module {
           complete: chats.length <= a.limit,
           sms_scope: "this Mac’s synced history only",
         };
-      const guid = this.refs.decode<any>("message-chat", a.chat_id).guid;
-      requireGrant(ctx, "message_chats", guid);
-      const chat = chats.find((c) => c.guid === guid);
+      }
+      const guid = this.refs.decode<{ guid: string }>(
+        "message-chat",
+        a.chat_id,
+      ).guid;
+      const explicit = ctx.grants?.message_chats?.includes(guid);
+      if (send || !readableIds.has(guid))
+        requireGrant(ctx, "message_chats", guid);
+      const chat = this.chats(db, new Set([guid]))[0];
       if (!chat)
         throw new AppError("STALE_REFERENCE", "Chat is no longer available.");
       if (op === "prepare") {
@@ -315,7 +346,7 @@ export class MessagesModule implements Module {
         .map((c) => (columns.has(c) ? `m.${c}` : `NULL AS ${c}`))
         .join(",");
       const statement = db.prepare(
-        `SELECT m.ROWID AS rowid,m.guid,m.text,m.date,m.is_from_me,m.service,${optional} FROM message m JOIN chat_message_join j ON j.message_id=m.ROWID WHERE j.chat_id=? AND ((m.date>=? AND m.date<?) OR (abs(m.date)<100000000000 AND m.date>=? AND m.date<?)) ORDER BY m.date DESC,m.ROWID DESC LIMIT 2001`,
+        `SELECT m.ROWID AS rowid,m.guid,m.text,m.date,m.is_from_me,m.service,${optional} FROM message m JOIN chat_message_join j ON j.message_id=m.ROWID WHERE j.chat_id=? ${explicit ? "" : "AND m.service='SMS'"} AND ((m.date>=? AND m.date<?) OR (abs(m.date)<100000000000 AND m.date>=? AND m.date<?)) ORDER BY m.date DESC,m.ROWID DESC LIMIT 2001`,
       );
       statement.setReadBigInts(true);
       const rows = statement.all(
@@ -430,6 +461,7 @@ export class MessagesModule implements Module {
     db: DatabaseSync,
     ctx: AccessContext,
     a: { limit: number; cursor?: string },
+    readableIds: ReadonlySet<string>,
   ) {
     const columns = new Set(
       (
@@ -442,8 +474,13 @@ export class MessagesModule implements Module {
         "This Messages database has no explicit is_read field.",
         "Unread SMS cannot be inferred from delivery or read-receipt timestamps.",
       );
-    const grants = [...new Set(ctx.grants!.message_chats!)].sort();
-    const scope = hash(grants);
+    const grants = [...readableIds];
+    const explicit = [...new Set(ctx.grants?.message_chats)].sort();
+    const auto = ctx.grants?.sms_read_scope === "all_sms";
+    // New SMS chats are normal live arrivals. Invalidate a cursor on a policy change.
+    const scope = hash(
+      auto ? { explicit, sms_read_scope: "all_sms" } : explicit,
+    );
     const cursor = a.cursor
       ? z
           .object({
@@ -544,6 +581,7 @@ export class MessagesModule implements Module {
       read_state_source: "message.is_read",
       scope: {
         authorized_chats: grants.length,
+        sms_read_scope: auto ? "all_sms" : "selected",
         service: "SMS",
         synced_to_this_mac_only: true,
       },

@@ -69,7 +69,7 @@ async function main() {
   }
   if (command === "--help") {
     console.log(
-      "Apple2Agent\n  serve [--profile legacy|calendar|all|readonly]\n  setup\n  configure MODULE\n  module-status MODULE [--profile all]\n  review ACTION_ID\n  link-mail-provider\n  maintenance\n  connector-configure\n  connector-connect\n  connector-status\n  configure-mail ADDRESS\n  doctor\n  select-calendar\n  calendar-access [selected|all-writable]\n  tool NAME JSON [--profile PROFILE]\n\nSecrets are entered only in the native setup window.",
+      "Apple2Agent\n  serve [--profile legacy|calendar|all|readonly]\n  setup\n  configure MODULE\n  module-status MODULE [--profile all]\n  review ACTION_ID\n  link-mail-provider\n  maintenance\n  connector-configure\n  connector-connect\n  connector-status\n  configure-mail ADDRESS\n  doctor\n  select-calendar\n  calendar-access [selected|all-writable]\n  sms-read-access [selected|all-sms]\n  tool NAME JSON [--profile PROFILE]\n\nSecrets are entered only in the native setup window.",
     );
     return;
   }
@@ -90,6 +90,23 @@ async function main() {
         default_calendar_unchanged: true,
         next_action:
           "Reconnect MCP to load this write scope. Apple read-only calendars remain protected.",
+      }),
+    );
+    return;
+  }
+  if (command === "sms-read-access") {
+    if (!config?.hub?.enabled_modules.includes("messages"))
+      throw new AppError(
+        "NOT_CONFIGURED",
+        "Enable Messages in local setup first.",
+      );
+    const mode = z.enum(["selected", "all-sms"]).parse(process.argv[3]);
+    config.hub.sms_read_scope = mode === "all-sms" ? "all_sms" : "selected";
+    await saveConfig(directory, config);
+    console.log(
+      JSON.stringify({
+        sms_read_scope: config.hub.sms_read_scope,
+        next_action: "Reconnect once to load the new read policy.",
       }),
     );
     return;

@@ -118,13 +118,13 @@ export const toolDescriptions: Readonly<Record<string, string>> = {
   contacts_update_group:
     "Rename a contact group or add/remove explicit members using its current revision. Reuse request_id.",
   imessage_list_chats:
-    "List explicitly authorized Messages chats and their exact participants. SMS history is available only if already synced to this Mac.",
+    "List Messages chats allowed by the local read policy and their participants. SMS history is available only if already synced to this Mac.",
   imessage_read_chat:
     "Read bounded history from one authorized chat in a time window of at most 366 days. Unsupported bodies and missing attachment content are reported.",
   imessage_search_messages:
     "Search decoded message text in one authorized chat and bounded time window. Incomplete or unsupported history does not prove absence.",
   imessage_list_unread_sms:
-    "List incoming unread SMS across explicitly authorized chats synced to this Mac. Uses the local is_read flag; never marks messages read. Follow next_cursor for more, and restart for new arrivals. Missing read-state support is reported explicitly.",
+    "List incoming unread SMS synced to this Mac within the local read scope (selected chats or all SMS). Uses the local is_read flag; never marks messages read. Follow next_cursor for more, and restart for new arrivals. Missing read-state support is reported explicitly.",
   imessage_send_message:
     "Prepare a frozen iMessage action with exact chat participants and text for trusted native review. Does not send. No SMS or alternate-chat fallback. Reuse request_id.",
   imessage_execute_send:
